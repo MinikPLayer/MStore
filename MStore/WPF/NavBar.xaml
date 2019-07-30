@@ -1,0 +1,13 @@
+﻿<UserControl x:Class="MStore.Controls.NavBar"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:MStore.Controls"
+             mc:Ignorable="d" 
+             d:DesignHeight="480" d:DesignWidth="100" Width="480" Height="100">
+	<Grid Width="480" Height="102">
+		<Button Content="Library" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="129" Height="82" Name="LibraryButton" FontSize="36" Click="LibraryButton_Click"/>
+		<Button Content="Menu" HorizontalAlignment="Left" Margin="144,10,0,0" VerticalAlignment="Top" Width="129" Height="82" x:Name="MenuButton" FontSize="36" Click="MenuButton_Click"  />
+	</Grid>
+</UserControl>

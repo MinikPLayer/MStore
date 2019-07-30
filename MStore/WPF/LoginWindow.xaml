@@ -1,0 +1,21 @@
+﻿<Window x:Class="MStore.Login.LoginWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MStore.Login"
+        mc:Ignorable="d"
+        Title="LoginWindow" Height="460" Width="400" ResizeMode="CanMinimize">
+	<Grid Height="459" Margin="0,0,-6,-28">
+		<TextBlock HorizontalAlignment="Left" Margin="31,152,0,0" TextWrapping="Wrap" Text="Login:" VerticalAlignment="Top" Height="35" Width="76" FontSize="23" LineHeight="6"/>
+		<TextBlock HorizontalAlignment="Left" Margin="31,212,0,0" TextWrapping="Wrap" Text="Hasło:" VerticalAlignment="Top" Height="35" Width="76" FontSize="23" LineHeight="6"/>
+		<TextBox Padding="6" HorizontalAlignment="Left" Height="35" Margin="112,152,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Width="222" TextAlignment="Center" FontSize="16" FontFamily="SimSun" Name="LoginTextBot"/>
+		<PasswordBox Padding="4" HorizontalAlignment="Left" Height="35" Margin="112,212,0,0" TextBlock.TextAlignment="Center" TextBlock.FontSize="16" VerticalAlignment="Top" Width="222" Name="PasswordTextBox"/>
+		<Button Content="Login" HorizontalAlignment="Left" Margin="30,356,0,0" VerticalAlignment="Top" Width="140" RenderTransformOrigin="0.5,0.5" Height="36" Name="LoginButton" Click="LoginButton_Click"/>
+		<Image HorizontalAlignment="Left" Height="100" Margin="15,10,0,0" VerticalAlignment="Top" Width="356" Source="/MStore;component/Images/MServer banner2.png">
+		</Image>
+		<Button Content="Register" HorizontalAlignment="Left" Margin="230,356,0,0" VerticalAlignment="Top" Width="140" RenderTransformOrigin="0.5,0.5" Height="36" x:Name="RegisterButton" Click="RegisterButton_Click"/>
+
+
+	</Grid>
+</Window>
