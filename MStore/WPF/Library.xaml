@@ -17,7 +17,7 @@
 		</ScrollViewer>
 		<TextBlock x:Name="GameTitle" HorizontalAlignment="Left" Height="32" Margin="366,177,0,0" TextWrapping="Wrap" Text="GameTitle" VerticalAlignment="Top" Width="559" FontSize="22" FontWeight="Bold" LineHeight="6"/>
 		<Image Source="pack://application:,,,/Images/Default/Icon.png" HorizontalAlignment="Left" Height="32" Margin="316,177,0,0" VerticalAlignment="Top" Width="32"/>
-		<Button x:Name="RunButton" Content="Run" HorizontalAlignment="Left" Margin="366,230,0,0" VerticalAlignment="Top" Width="95" Height="32"/>
+		<Button x:Name="RunButton" Content="Run" HorizontalAlignment="Left" Margin="366,230,0,0" VerticalAlignment="Top" Width="95" Height="32" Click="RunButton_Click"/>
 
 
 

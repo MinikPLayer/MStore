@@ -15,6 +15,8 @@ namespace MStore
         private ClientEngine socket;
         public bool connected = false;
 
+        public static string gamesPath = "./downloadFiles/";
+
 
         private string DeleteSpaces(string line)
         {
@@ -107,12 +109,23 @@ port = 15332";
             configDir = GetPath(configDir);
         }
 
+        private void CreateDirectories()
+        {
+            if(!Directory.Exists(gamesPath))
+            {
+                Directory.CreateDirectory(gamesPath);
+            }
+        }
+
         string ipAddress = "127.0.0.1";
         int port = 15332;
+        int downloadEnginePort = 5592;
 
         public StoreClient()
         {
             SetRelativePaths();
+
+            CreateDirectories();
 
             LoadConfig();
 
@@ -122,6 +135,7 @@ port = 15332";
             //return;
 
 
+            Debug.Log("Connecting to server...");
             socket = new ClientEngine(ipAddress, port);
             //socket = new ClientEngine("mserver.ml", 15332);
 
@@ -135,15 +149,36 @@ port = 15332";
             socket.Send("NiePodamCiHasla");*/
 
             //TestStartCommunication();
+            
 
-            Thread.Sleep(500);
+
+
+            //Check if connected
+            for(int i = 0;i<50;i++)
+            {
+                if(socket.connected)
+                {
+                    break;
+                }
+                if(socket.connectionFailed)
+                {
+                    break;
+                }
+                
+                Thread.Sleep(5000 / 50);
+            }
+            if(!socket.connected)
+            {
+                Debug.FatalError("Cannot connect to server", 14, 1000);
+                return;
+            }
 
             WaitForWelcomePacket();
         }
 
         private void WaitForWelcomePacket()
         {
-            
+
             while (!connected)
             {
                 string packet = socket.WaitForReceive();
@@ -193,6 +228,72 @@ port = 15332";
                     socket._Send("URNFO" + parameters);
                     break;
             }
+        }
+
+        private ClientEngine createNewClient(string _ip, int _port)
+        {
+            ClientEngine returnClient = new ClientEngine(_ip, _port);
+
+
+
+
+
+
+
+            //Check if connected
+            for (int i = 0; i < 50; i++)
+            {
+                if (returnClient.connected)
+                {
+                    break;
+                }
+                if (returnClient.connectionFailed)
+                {
+                    break;
+                }
+
+                Thread.Sleep(5000 / 50);
+            }
+            if (!returnClient.connected)
+            {
+                Debug.FatalError("Cannot connect to server", 14, 1000);
+                return null;
+            }
+
+            while(true)
+            {
+                string data = returnClient.WaitForReceive();
+                if(data == "WP")
+                {
+                    Debug.LogWarning("Got welcome packet");
+                    break;
+                }
+                else
+                {
+                    Debug.LogError("Wrong welcome packet: " + data);
+                }
+            }
+            
+
+            return returnClient;
+        }
+
+        public void DownloadGame(Int64 id, string token, Action<DownloadEngine.DownloadStatus, long> downloadCompleteFunction = null)
+        {
+            DownloadEngine downloadEngine = new DownloadEngine(createNewClient(ipAddress, downloadEnginePort), token);
+            int empty = -1;
+            Library.Game game = Library.FindGame(id, out empty);
+            if(game == null)
+            {
+                Debug.LogError("Game with id " + id + " not found!!!");
+                return;
+            }
+            Debug.Log("Downloading game...");
+            if(!Directory.Exists(gamesPath + game.path))
+            {
+                Directory.CreateDirectory(gamesPath + game.path);
+            }
+            downloadEngine.DownloadGame(id, gamesPath + game.path + game.fileName, downloadCompleteFunction);
         }
 
         public string RequestUserInfo()

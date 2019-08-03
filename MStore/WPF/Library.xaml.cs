@@ -16,6 +16,12 @@ using System.Windows.Markup;
 using System.IO;
 using System.Xml;
 
+using System.Windows.Threading;
+
+using System.IO.Compression;
+
+using System.Diagnostics;
+
 namespace MStore
 {
     /// <summary>
@@ -36,6 +42,8 @@ namespace MStore
         public string appPath = "./installed/";
 
         public User userInfo = new User();
+
+        private int gamesSPGamesStartIndex = -1;
 
         public class User
         {
@@ -64,6 +72,9 @@ namespace MStore
             public string price = "";
 
             public string path = "";
+            public string fileName = "";
+
+            public string execName = "";
 
             public bool installed = false;
             //Icon
@@ -75,7 +86,28 @@ namespace MStore
             }
         }
 
-        private Game FindGame(string name, out int listPosition)
+        public static Game FindGame(long id)
+        {
+            int listPosition = 0;
+            return FindGame(id, out listPosition);
+        }
+
+        public static Game FindGame(long id, out int listPosition)
+        {
+            for (int i = 0; i < games.Count; i++)
+            {
+                if (id == games[i].id)
+                {
+                    listPosition = i;
+                    return games[i];
+                }
+            }
+
+            listPosition = -1;
+            return null;
+        }
+
+        private static Game FindGame(string name, out int listPosition)
         {
             
             for(int i = 0;i<games.Count;i++)
@@ -156,6 +188,7 @@ namespace MStore
 
 
         SolidColorBrush notInstalledColor = Brushes.DarkGray;
+        SolidColorBrush installedColor = Brushes.Black;
         private void AddGameToTheList(Game game)
         {
             if(GameListTextTemplate.Text == "")
@@ -166,6 +199,10 @@ namespace MStore
                 if (!game.installed)
                 {
                     GameListTextTemplate.Foreground = notInstalledColor;
+                }
+                else
+                {
+                    GameListTextTemplate.Foreground = installedColor;
                 }
 
                 return;
@@ -182,6 +219,10 @@ namespace MStore
             if(!game.installed)
             {
                 newButton.Foreground = notInstalledColor;
+            }
+            else
+            {
+                newButton.Foreground = installedColor;
             }
 
             GamesSP.Children.Add(newButton);
@@ -213,7 +254,11 @@ namespace MStore
             Debug.Log("Username: " + userInfo.userName);
             Debug.Log("Token: " + userInfo.token);
 
+            gamesSPGamesStartIndex = GamesSP.Children.Count;
+
             GetGamesList();
+
+            //client.DownloadGame(0, userInfo.token);
 
         }
 
@@ -335,6 +380,14 @@ namespace MStore
 
             game.path = data;
 
+            gameInfo = GetStringToSpecialCharAndDelete(gameInfo, '\n', out data);
+
+            game.fileName = data;
+
+            gameInfo = GetStringToSpecialCharAndDelete(gameInfo, '\n', out data);
+
+            game.execName = data;
+
             return game;
         }
 
@@ -419,6 +472,39 @@ namespace MStore
             }
 
 
+            RefreshGamesDisplay();
+            
+
+           
+        }
+
+        public void ClearDisplayedGames()
+        {
+
+            if(GameListTextTemplate.Text != "")
+            {
+                GameListTextTemplate.MouseLeftButtonDown -= OnGameTextClick;
+            }
+
+            GameListTextTemplate.Text = "";
+            
+
+            if (GamesSP.Children.Count > gamesSPGamesStartIndex)
+            {
+                GamesSP.Children.RemoveRange(gamesSPGamesStartIndex, GamesSP.Children.Count);
+            }
+
+
+            
+            
+        }
+
+        public void RefreshGamesDisplay()
+        {
+
+            ClearDisplayedGames();
+
+
             SortGamesAlphabetically();
 
             MarkInstalledGames();
@@ -428,16 +514,20 @@ namespace MStore
                 AddGameToTheList(games[i]);
             }
 
-            
+
 
             if (games.Count > 0)
             {
-                actualGameSelected = games[0];
-                DisplayGameInfo(games[0]);
+                if (actualGameSelected == null)
+                {
+                    actualGameSelected = games[0];
+                    DisplayGameInfo(games[0]);
+                }
+                else
+                {
+                    DisplayGameInfo(actualGameSelected);
+                }
             }
-            
-
-           
         }
 
         
@@ -504,6 +594,78 @@ namespace MStore
             games = newGamesList;
         }
 
+        public void GameInstalled(DownloadEngine.DownloadStatus status, long id)
+        {
+            Debug.LogWarning("Game installation status: " + status);
+
+            if(status != DownloadEngine.DownloadStatus.success)
+            {
+                return;
+            }
+
+            Game game = FindGame(id);
+            if(game == null)
+            {
+                Debug.LogError("Something went desperately wrong, downloaded game not found");
+                return;
+            }
+
+            UnpackGame(game);
+
+            //RefreshGamesDisplay();
+            if (!GameListTextTemplate.Dispatcher.CheckAccess())
+            {
+                GameListTextTemplate.Dispatcher.Invoke(new Action(RefreshGamesDisplay));
+                return;
+            }
+        }
+
+        public void UnpackGame(Game game)
+        {
+            if(!Directory.Exists(appPath + game.path))
+            {
+                Directory.CreateDirectory(appPath + game.path);
+            }
+            ZipFile.ExtractToDirectory(StoreClient.gamesPath + game.path + game.fileName, appPath + game.path);
+        }
+
+        public void InstallGame(Game game)
+        {
+            client.DownloadGame(game.id, userInfo.token, GameInstalled);
+        }
+
+        public void RunGame(Game game)
+        {
+            string runPath = AppDomain.CurrentDomain.BaseDirectory + appPath + game.path + game.execName;
+            if (File.Exists(runPath))
+            {
+                Process myProcess = new Process();
+                myProcess.StartInfo.FileName = runPath;
+                myProcess.Start();
+            }
+            else
+            {
+                Debug.LogError("Error running " + game.name + ", missing executable");
+            }
+        }
+
+        public void InstallOrRunGame(Game game)
+        {
+            if (game.installed)
+            {
+                RunGame(game);
+            }
+            else
+            {
+                InstallGame(game);
+            }
+        }
+
+
+
+
+
+        // Buttons clicks
 
         public void MenuButton_Click(object sender, RoutedEventArgs e)
         {
@@ -513,6 +675,17 @@ namespace MStore
         private void NavBar_Loaded(object sender, RoutedEventArgs e)
         {
 
+        }
+
+
+        /// <summary>
+        /// Run / install button
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void RunButton_Click(object sender, RoutedEventArgs e)
+        {
+            InstallOrRunGame(actualGameSelected);
         }
     }
 }

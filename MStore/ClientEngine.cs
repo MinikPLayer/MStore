@@ -24,7 +24,11 @@ namespace MStore
         public delegate void DataRawReceived(byte[] dataReceived, Int32 length);
         public DataRawReceived dataRawReceived;
 
+        public bool connected { get; private set; } = false;
+        public bool connectionFailed { get; private set; } = false;
         
+        
+
         public ClientEngine(string _address, Int32 _port)
         {
             address = _address;
@@ -228,7 +232,10 @@ namespace MStore
                 rawReceivedata = new byte[size];
             }*/
 
-
+                if(size == 85)
+                {
+                    Debug.Log("85 :/");
+                }
 
 
                 int packetSize = size;
@@ -257,6 +264,8 @@ namespace MStore
                     bytesReceived += bytesCount;
 
                     packetSize -= bytesCount;
+                    
+                    
 
             }
 
@@ -320,6 +329,12 @@ namespace MStore
                 while (size == 0)
                 {
                     Message message = Receive_LowLevel(1, timeout, receiveMessageCode, useString);
+                    
+
+                    //Receive code only once
+                    receiveMessageCode = false;
+
+
                     //receiveMessage = false;
                     /* if(!byte.TryParse(message.data, out size))
                      {
@@ -337,6 +352,7 @@ namespace MStore
                     //size = (byte)message.data[0];
                     //size = rawReceivedata[rawReceivedata.Length - 1];
                     size = rawReceivedata[0];
+                    //Debug.Log("Size: " + size);
 
                     //if(rawReceivedata[rawReceivedata.Length - 1] == size)
                     if(rawReceivedata[0] == size)
@@ -388,8 +404,11 @@ namespace MStore
                 }
 
                 count++;
+                
 
             } while (size >= 255);
+
+            Debug.Log("Out of loop, size is: " + size);
 
         }
 
@@ -431,12 +450,15 @@ namespace MStore
         }
         
 
-        private void Connect()
+        private bool Connect()
         {
             try
             {
 
                 socket = new TcpClient(address, port);
+                if (socket.Connected) connected = true;
+
+                return true;
 
                 /*Receive(-1);
                 Send("Minik");
@@ -475,6 +497,10 @@ namespace MStore
                 }
                 Console.WriteLine(message);
                 Console.ForegroundColor = ConsoleColor.Gray;
+
+                connectionFailed = true;
+
+                return false;
             }
         }
     }
