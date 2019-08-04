@@ -35,7 +35,7 @@ namespace MStore.Login
             InitializeComponent();
 
             //Speed up debugging
-            DebugAutoLog();
+            //DebugAutoLog();
 
             
         }
@@ -127,7 +127,7 @@ namespace MStore.Login
             {
 
                 //Debugging
-                //MessageBox.Show("User " + LoginTextBot.Text + " successfully registered", "Register complete", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show("User " + LoginTextBot.Text + " successfully registered", "Register complete", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             else
             {   
@@ -141,7 +141,7 @@ namespace MStore.Login
 
 
                 //Debugging
-                //MessageBox.Show(message, "Login", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(message, "Login", MessageBoxButton.OK, MessageBoxImage.Error);
 
             }
         }

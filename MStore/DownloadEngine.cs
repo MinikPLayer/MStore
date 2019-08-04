@@ -85,7 +85,7 @@ namespace MStore
             stream.Write(data, 0, length);
 
 
-            Debug.Log("Debug slowing downloading");
+            //Debug.Log("Debug slowing downloading");
         }
 
         public enum DownloadStatus
