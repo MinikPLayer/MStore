@@ -70,8 +70,8 @@ namespace MStore
             //size_str += size;
             size_str += (char)size;
             
-            Debug.Log("Size str lenth: " + size_str.Length);
-            Debug.Log("Sending size_str: " + size_str);
+            //Debug.Log("Size str lenth: " + size_str.Length);
+            //Debug.Log("Sending size_str: " + (int)(size_str[0]));
 
             Send_LowLevel(size_str);    // Length
 
@@ -180,7 +180,7 @@ namespace MStore
 
                 if (receiveMessageCode)
                 {
-                    Debug.Log("Receiving message code");
+                    //Debug.Log("Receiving message code");
                     byte[] codeBuffer = new byte[5];
 
                     int readedBytes = 0;
@@ -205,7 +205,7 @@ namespace MStore
 
                         messageCode = Encoding.UTF8.GetString(codeBuffer, 0, 5);
                     }
-                    Debug.Log("Message Code: " + messageCode);
+                    //Debug.Log("Message Code: " + messageCode);
                 }
 
 
@@ -316,8 +316,6 @@ namespace MStore
             byte size = 0;
 
 
-            int count = 0;
-
 
             Stopwatch overrallWatch = new Stopwatch();
 
@@ -397,18 +395,11 @@ namespace MStore
 
                 }
 
-                if(count % 5000 == 0)
-                {
-                    Debug.Log("Averge full receive time: " + (overrallWatch.ElapsedMilliseconds / 5000f) + " ms");
-                    overrallWatch.Restart();
-                }
-
-                count++;
                 
 
             } while (size >= 255);
 
-            Debug.Log("Out of loop, size is: " + size);
+            //Debug.Log("Out of loop, size is: " + size);
 
         }
 

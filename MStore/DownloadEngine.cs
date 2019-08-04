@@ -29,6 +29,9 @@ namespace MStore
         //public DownloadStatusFunction downloadCompleteFunction;
         public Action<DownloadStatus, long> downloadCompleteFunction;
 
+
+
+
         /// <summary>
         /// Blocking function to receive data
         /// </summary>
@@ -73,13 +76,16 @@ namespace MStore
 
         }
 
-        int fileSize = 0;
+        public int downloadedDataSize { get; private set; } = 0;
         private void SaveToFile(byte[] data, Int32 length)
         {
             //Debug.Log("Received");
             //Debug.Log("Writing data with length: " + length);
-            fileSize += length;
+            downloadedDataSize += length;
             stream.Write(data, 0, length);
+
+
+            Debug.Log("Debug slowing downloading");
         }
 
         public enum DownloadStatus
@@ -130,6 +136,11 @@ namespace MStore
             {
                 //downloadCompleteFunction.Invoke(status);
                 downloadCompleteFunction(status, id);
+                Debug.LogWarning("Invoking downloadcompleteFunction");
+            }
+            else
+            {
+                Debug.LogWarning("DownloadCompleteFunction is null");
             }
 
             working = false;
@@ -184,7 +195,7 @@ namespace MStore
 
             stream.Close();
             Debug.Log("Closed stream");
-            Debug.Log("Downloaded " + fileSize + " bytes");
+            Debug.Log("Downloaded " + downloadedDataSize + " bytes");
 
             DownloadStatus status = DownloadStatus.success;
 
@@ -195,7 +206,7 @@ namespace MStore
             return;
         }
 
-        private void _DownloadGames(Int64[] gamesIDs, string[] outputFiles)
+        /*private void _DownloadGames(Int64[] gamesIDs, string[] outputFiles)
         {
             for (int i = 0; i < outputFiles.Length; i++)
             {
@@ -225,7 +236,7 @@ namespace MStore
 
 
             return true;
-        }
+        }*/
 
         /// <summary>
         /// Downloads file from server
@@ -257,6 +268,95 @@ namespace MStore
 
             bool result = AuthenticateClient(token);
             Debug.Log("Authentication result: " + result);
+        }
+    }
+
+    public class DownloadManager
+    {
+        public class QueueEntry
+        {
+            public long id = -1;
+            public string path = "";
+            public string token = "";
+            public Action<DownloadEngine.DownloadStatus, long> completeFunction;
+
+            public QueueEntry(long _id, string _path, string _token, Action<DownloadEngine.DownloadStatus, long> _completeFunction)
+            {
+                id = _id;
+                path = _path;
+                token = _token;
+                completeFunction = _completeFunction;
+            }
+        }
+
+        public List<QueueEntry> queue = new List<QueueEntry>();
+
+        public string ipAddress;
+        public int port;
+
+        public DownloadEngine downloadEngine;
+
+        private Thread workingThread;
+
+        public void DownloadThread()
+        {
+            /*if (downloadEngine == null)
+            {
+                downloadEngine = new DownloadEngine(StoreClient.createNewClient(ipAddress, port), token);
+            }*/
+            while(true)
+            {
+                while(queue.Count == 0)
+                {
+                    Thread.Sleep(100);
+                }
+
+                QueueEntry entry = queue[0];
+                downloadEngine = new DownloadEngine(StoreClient.createNewClient(ipAddress, port), entry.token);
+
+                downloadEngine.DownloadGame(entry.id, entry.path, entry.completeFunction);
+
+                while(downloadEngine.working)
+                {
+                    Thread.Sleep(100);
+                }
+
+                queue.RemoveAt(0);
+            }
+        }
+
+        public DownloadEngine DownloadGame(long id, string token, string outputPath, Action<DownloadEngine.DownloadStatus, long> completeFunction = null)
+        {
+
+
+            /*int empty = -1;
+            Library.Game game = Library.FindGame(id, out empty);
+            if (game == null)
+            {
+                Debug.LogError("Game with id " + id + " not found!!!");
+                return null;
+            }
+            Debug.Log("Downloading game...");
+            if (!Directory.Exists(gamesPath + game.path))
+            {
+                Directory.CreateDirectory(gamesPath + game.path);
+            }*/
+            //downloadEngine.DownloadGame(id, outputPath, completeFunction);
+
+            QueueEntry entry = new QueueEntry(id, outputPath, token, completeFunction);
+
+            queue.Add(entry);
+
+            return downloadEngine;
+        }
+
+        public DownloadManager(string _ip, int _port)
+        {
+            ipAddress = _ip;
+            port = _port;
+
+            workingThread = new Thread(DownloadThread);
+            workingThread.Start();
         }
     }
 

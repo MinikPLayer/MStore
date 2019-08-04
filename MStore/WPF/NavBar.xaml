@@ -5,9 +5,19 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:MStore.Controls"
              mc:Ignorable="d" 
-             d:DesignHeight="480" d:DesignWidth="100" Width="480" Height="100">
-	<Grid Width="480" Height="102">
-		<Button Content="Library" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="129" Height="82" Name="LibraryButton" FontSize="36" Click="LibraryButton_Click"/>
-		<Button Content="Menu" HorizontalAlignment="Left" Margin="144,10,0,0" VerticalAlignment="Top" Width="129" Height="82" x:Name="MenuButton" FontSize="36" Click="MenuButton_Click"  />
+             d:DesignHeight="480" Width="1246" Height="100">
+	<Grid Height="102" Margin="0,0,0,-2">
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="39*"/>
+			<ColumnDefinition Width="715*"/>
+			<ColumnDefinition Width="19*"/>
+		</Grid.ColumnDefinitions>
+		<Button Content="Library" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="129" Height="82" Name="LibraryButton" FontSize="36" Click="LibraryButton_Click" Grid.ColumnSpan="2"/>
+		<Button Content="Menu" HorizontalAlignment="Left" Margin="81,10,0,0" VerticalAlignment="Top" Width="129" Height="82" x:Name="MenuButton" FontSize="36" Click="MenuButton_Click" Grid.Column="1"  />
+		<Button Name="DownloadMenuButton" HorizontalAlignment="Left" Margin="1014,10,0,0" VerticalAlignment="Top" Width="129" Height="82" FontSize="36" Grid.Column="1" Click="DownloadMenuButton_Click" >
+			<StackPanel>
+				<Image Source="pack://application:,,,/Images/DownloadIcon.png" Height="76"/>
+			</StackPanel>
+		</Button>
 	</Grid>
 </UserControl>

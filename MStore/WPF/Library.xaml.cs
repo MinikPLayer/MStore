@@ -22,6 +22,8 @@ using System.IO.Compression;
 
 using System.Diagnostics;
 
+using System.Threading;
+
 namespace MStore
 {
     /// <summary>
@@ -29,7 +31,7 @@ namespace MStore
     /// </summary>
     public partial class Library : Window
     {
-        StoreClient client;
+        public static StoreClient client;
 
         int clickedTextBlockIndex = -1;
 
@@ -76,6 +78,11 @@ namespace MStore
 
             public string execName = "";
 
+            public Size diskSize = new Size(-1);
+            public Size downloadSize = new Size(-1);
+
+            public Size alreadyDownloaded = new Size(-1);
+
             public bool installed = false;
             //Icon
 
@@ -83,6 +90,45 @@ namespace MStore
             {
                 name = gameName;
                 id = gameID;
+            }
+
+            public struct Size
+            {
+                public long bytes;
+
+                public Size(long _bytes)
+                {
+                    bytes = _bytes;
+                }
+
+                static string[] sizeSuffixes = { "B", "KB", "MB", "GB", "TB", "PB" };
+                public override string ToString()
+                {
+                    int level = 0;
+                    long __bytes = bytes;
+
+                    while(__bytes > 1024)
+                    {
+                        __bytes /= 1024;
+                        level++;
+                    }
+
+                    if(level >= sizeSuffixes.Length)
+                    {
+                        return bytes.ToString();
+                    }
+
+                    return __bytes.ToString() + sizeSuffixes[level];
+
+
+                }
+
+                public static Size operator +(Size s1, long add)
+                {
+                    s1.bytes += add;
+                    return s1;
+                }
+
             }
         }
 
@@ -155,10 +201,12 @@ namespace MStore
             if(game.installed)
             {
                 RunButton.Content = "Run";
+                UninstallButton.Visibility = Visibility.Visible;
             }
             else
             {
                 RunButton.Content = "Install";
+                UninstallButton.Visibility = Visibility.Hidden;
             }
         }
 
@@ -367,26 +415,38 @@ namespace MStore
             }
 
             gameInfo = GetStringToSpecialCharAndDelete(gameInfo, '\n', out data);
-
             //game.id = long.Parse(data);
             game.name = data;
 
 
             gameInfo = GetStringToSpecialCharAndDelete(gameInfo, '\n', out data);
-
             game.price = data;
 
-            gameInfo = GetStringToSpecialCharAndDelete(gameInfo, '\n', out data);
 
+            gameInfo = GetStringToSpecialCharAndDelete(gameInfo, '\n', out data);
             game.path = data;
 
-            gameInfo = GetStringToSpecialCharAndDelete(gameInfo, '\n', out data);
 
+            gameInfo = GetStringToSpecialCharAndDelete(gameInfo, '\n', out data);
             game.fileName = data;
 
-            gameInfo = GetStringToSpecialCharAndDelete(gameInfo, '\n', out data);
 
+            gameInfo = GetStringToSpecialCharAndDelete(gameInfo, '\n', out data);
             game.execName = data;
+
+            //Size
+            gameInfo = GetStringToSpecialCharAndDelete(gameInfo, '\n', out data);
+            if(!long.TryParse(data, out game.downloadSize.bytes))
+            {
+                Debug.LogError("Cannot parse \"" + data + "\" ( download size ) to long");
+            }
+
+            gameInfo = GetStringToSpecialCharAndDelete(gameInfo, '\n', out data);
+            if (!long.TryParse(data, out game.diskSize.bytes))
+            {
+                Debug.LogError("Cannot parse \"" + data + "\" ( disk size ) to long");
+            }
+
 
             return game;
         }
@@ -404,6 +464,10 @@ namespace MStore
                 if(CheckIfGameIsInstalled(games[i]))
                 {
                     games[i].installed = true;
+                }
+                else
+                {
+                    games[i].installed = false;
                 }
             }
         }
@@ -612,6 +676,8 @@ namespace MStore
 
             UnpackGame(game);
 
+            game.installed = true;
+
             //RefreshGamesDisplay();
             if (!GameListTextTemplate.Dispatcher.CheckAccess())
             {
@@ -629,9 +695,41 @@ namespace MStore
             ZipFile.ExtractToDirectory(StoreClient.gamesPath + game.path + game.fileName, appPath + game.path);
         }
 
+        public void InstallGameUserDecided(Game game, InstallAppPopup.UserChoose choose)
+        {
+            DownloadEngine engine;
+            if(choose == InstallAppPopup.UserChoose.install)
+            {
+                engine = client.DownloadGame(game.id, userInfo.token, GameInstalled);
+
+                /*Thread.Sleep(50);
+
+                //while(engine.downloadedDataSize < game.downloadSize.bytes)
+                while(!game.installed)
+                {
+                    while(client.downloadManager.downloadEngine == null)
+                    {
+                        Thread.Sleep(10);
+                    }
+                    Thread.Sleep(50);
+                    //Debug.Log("Downloaded " + engine.downloadedDataSize + " bytes");
+                    Debug.Log("Downloaded " + (client.downloadManager.downloadEngine.downloadedDataSize * 100f / game.downloadSize.bytes).ToString() + "%");
+                }*/
+            }
+
+            
+        }
+
         public void InstallGame(Game game)
         {
-            client.DownloadGame(game.id, userInfo.token, GameInstalled);
+            //client.DownloadGame(game.id, userInfo.token, GameInstalled);
+            InstallAppPopup installAppPopup = new InstallAppPopup(this);
+            installAppPopup.DisplayGameInfo(game);
+            installAppPopup.userChoseFunction = InstallGameUserDecided;
+            
+
+
+            installAppPopup.ShowDialog();
         }
 
         public void RunGame(Game game)
@@ -641,6 +739,7 @@ namespace MStore
             {
                 Process myProcess = new Process();
                 myProcess.StartInfo.FileName = runPath;
+                myProcess.StartInfo.WorkingDirectory = AppDomain.CurrentDomain.BaseDirectory + appPath + game.path;
                 myProcess.Start();
             }
             else
@@ -662,6 +761,30 @@ namespace MStore
         }
 
 
+        public void UninstallGame(Game game)
+        {
+
+            ConfirmationWindow confirm = new ConfirmationWindow();
+            confirm.ShowDialog();
+
+            if (confirm.value)
+            {
+
+                string _path = appPath + game.path;
+
+                if (Directory.Exists(_path))
+                {
+
+
+                    Directory.Delete(_path, true);
+                }
+
+                RefreshGamesDisplay();
+            }
+
+        }
+
+
 
 
 
@@ -670,11 +793,6 @@ namespace MStore
         public void MenuButton_Click(object sender, RoutedEventArgs e)
         {
             PageManager.SetPage(new Menu().Content);
-        }
-
-        private void NavBar_Loaded(object sender, RoutedEventArgs e)
-        {
-
         }
 
 
@@ -686,6 +804,11 @@ namespace MStore
         private void RunButton_Click(object sender, RoutedEventArgs e)
         {
             InstallOrRunGame(actualGameSelected);
+        }
+
+        private void UninstallButton_Click(object sender, RoutedEventArgs e)
+        {
+            UninstallGame(actualGameSelected);
         }
     }
 }

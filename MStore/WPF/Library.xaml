@@ -8,7 +8,16 @@
         Title="Library" Height="720" Width="1280">
 
 	<Grid>
-		<local:NavBar Loaded="NavBar_Loaded" Margin="10,10,782,579"/>
+		<local:NavBar HorizontalAlignment="Left" Margin="10,8,0,0" VerticalAlignment="Top" Width="1248" RenderTransformOrigin="0.5,0.5">
+			<local:NavBar.RenderTransform>
+				<TransformGroup>
+					<ScaleTransform/>
+					<SkewTransform AngleY="-0.357"/>
+					<RotateTransform/>
+					<TranslateTransform Y="-1.494"/>
+				</TransformGroup>
+			</local:NavBar.RenderTransform>
+		</local:NavBar>
 		<ScrollViewer HorizontalAlignment="Left" Height="533" Margin="10,146,0,0" VerticalAlignment="Top" Width="242" Name="GamesList">
 			<StackPanel x:Name="GamesSP" HorizontalAlignment="Left" Height="564" Margin="0,0,0,0" VerticalAlignment="Top" Width="242">
 				<Button Content="Try free games" x:Name="TemplateButton" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Top" Width="223" Height="31"/>
@@ -18,6 +27,7 @@
 		<TextBlock x:Name="GameTitle" HorizontalAlignment="Left" Height="32" Margin="366,177,0,0" TextWrapping="Wrap" Text="GameTitle" VerticalAlignment="Top" Width="559" FontSize="22" FontWeight="Bold" LineHeight="6"/>
 		<Image Source="pack://application:,,,/Images/Default/Icon.png" HorizontalAlignment="Left" Height="32" Margin="316,177,0,0" VerticalAlignment="Top" Width="32"/>
 		<Button x:Name="RunButton" Content="Run" HorizontalAlignment="Left" Margin="366,230,0,0" VerticalAlignment="Top" Width="95" Height="32" Click="RunButton_Click"/>
+		<Button x:Name="UninstallButton" Content="Uninstall" HorizontalAlignment="Left" Margin="1173,230,0,0" VerticalAlignment="Top" Width="76" Click="UninstallButton_Click"/>
 
 
 

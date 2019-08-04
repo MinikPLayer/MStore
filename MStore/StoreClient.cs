@@ -17,6 +17,8 @@ namespace MStore
 
         public static string gamesPath = "./downloadFiles/";
 
+        public DownloadManager downloadManager;
+
 
         private string DeleteSpaces(string line)
         {
@@ -230,7 +232,7 @@ port = 15332";
             }
         }
 
-        private ClientEngine createNewClient(string _ip, int _port)
+        public static ClientEngine createNewClient(string _ip, int _port)
         {
             ClientEngine returnClient = new ClientEngine(_ip, _port);
 
@@ -278,22 +280,34 @@ port = 15332";
             return returnClient;
         }
 
-        public void DownloadGame(Int64 id, string token, Action<DownloadEngine.DownloadStatus, long> downloadCompleteFunction = null)
+        public DownloadEngine DownloadGame(Int64 id, string token, Action<DownloadEngine.DownloadStatus, long> downloadCompleteFunction = null)
         {
-            DownloadEngine downloadEngine = new DownloadEngine(createNewClient(ipAddress, downloadEnginePort), token);
+            //DownloadEngine downloadEngine = new DownloadEngine(createNewClient(ipAddress, downloadEnginePort), token);
+            /*if(downloadEngine == null)
+            {
+                downloadEngine = new DownloadEngine(createNewClient(ipAddress, downloadEnginePort), token);
+            }*/
+
+            if(downloadManager == null)
+            {
+                downloadManager = new DownloadManager(ipAddress, downloadEnginePort);
+            }
+
             int empty = -1;
             Library.Game game = Library.FindGame(id, out empty);
             if(game == null)
             {
                 Debug.LogError("Game with id " + id + " not found!!!");
-                return;
+                return null;
             }
             Debug.Log("Downloading game...");
             if(!Directory.Exists(gamesPath + game.path))
             {
                 Directory.CreateDirectory(gamesPath + game.path);
             }
-            downloadEngine.DownloadGame(id, gamesPath + game.path + game.fileName, downloadCompleteFunction);
+            //downloadEngine.DownloadGame(id, gamesPath + game.path + game.fileName, downloadCompleteFunction);
+
+            return downloadManager.DownloadGame(id, token, gamesPath + game.path + game.fileName, downloadCompleteFunction);
         }
 
         public string RequestUserInfo()
@@ -320,8 +334,10 @@ port = 15332";
 
         public string SendUserCredentials(string username, string password)
         {
-            socket._Send(username);
+            Debug.Log("Sending username");
+            socket._Send(username + '\n');
 
+            Debug.Log("Waiting for \"N\" from server");
             string receive = socket.WaitForReceive(10);
 
             if (receive != "N")
@@ -330,8 +346,16 @@ port = 15332";
                 return receive;
             }
 
-            socket._Send(password);
+            //Idk why
+            Thread.Sleep(50);
 
+            Debug.Log("Sending password");
+            socket._Send(password + '\n');
+
+            Thread.Sleep(50);
+
+
+            Debug.Log("Waiting for \"N\" from server");
             receive = socket.WaitForReceive(10);
             return receive;
         }

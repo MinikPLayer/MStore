@@ -34,5 +34,10 @@ namespace MStore.Controls
         {
             PageManager.SetPage(new Library().Content);
         }
+
+        private void DownloadMenuButton_Click(object sender, RoutedEventArgs e)
+        {
+            PageManager.SetPage(new DownloadMenu().Content);
+        }
     }
 }

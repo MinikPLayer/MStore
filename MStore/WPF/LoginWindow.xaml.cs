@@ -23,8 +23,8 @@ namespace MStore.Login
 
         private void DebugAutoLog()
         {
-            LoginTextBot.Text = "a";
-            PasswordTextBox.Password = "a";
+            LoginTextBot.Text = "abcd";
+            PasswordTextBox.Password = "abcd";
 
             RegisterButton_Click(this, new RoutedEventArgs());
             LoginButton_Click(this, new RoutedEventArgs());
