@@ -11,9 +11,9 @@
 		<Button x:Name="InstallButton" Content="Install" HorizontalAlignment="Left" Margin="235,362,0,0" VerticalAlignment="Top" Width="105" Height="28" Click="InstallButton_Click"/>
 		<TextBlock x:Name="GameName" HorizontalAlignment="Center" Margin="10,10,10,0" TextWrapping="Wrap" Text="GameName" VerticalAlignment="Top" Width="330" FontWeight="Bold" TextAlignment="Center" Height="74" FontSize="24"/>
 		<TextBlock HorizontalAlignment="Left" Margin="10,84,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="16"><Run Text="Size to downloa"/><Run Text="d"/><Run Text=":"/></TextBlock>
-		<TextBlock x:Name="downloadSizeText" HorizontalAlignment="Left" Margin="291,84,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="16" Text="150MB" TextAlignment="Right"/>
+		<TextBlock x:Name="downloadSizeText" HorizontalAlignment="Left" Margin="235,84,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="16" Text="UNKNOWN" TextAlignment="Right" Width="105"/>
 		<TextBlock HorizontalAlignment="Left" Margin="10,110,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="16" Text="Size on disk:"/>
-		<TextBlock x:Name="diskSizeText" HorizontalAlignment="Left" Margin="291,110,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="16" Text="150MB" TextAlignment="Right"/>
+		<TextBlock x:Name="diskSizeText" HorizontalAlignment="Left" Margin="235,110,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="16" Text="UNKNOWN" TextAlignment="Right" Width="105"/>
 
 	</Grid>
 </Window>

@@ -39,7 +39,10 @@ namespace MStore
             //Debugging V
 
             //loginWindow.Show();
-            loginWindow.ShowDialog();
+            if (!Login.LoginWindow.debug)
+            {
+                loginWindow.ShowDialog();
+            }
             //this.Visibility = Visibility.Hidden;
             
 

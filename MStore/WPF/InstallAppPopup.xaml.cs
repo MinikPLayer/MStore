@@ -46,8 +46,8 @@ namespace MStore
             }
 
             GameName.Text = game.name;
-            diskSizeText.Text = game.diskSize.ToString();
-            downloadSizeText.Text = game.downloadSize.ToString();
+            diskSizeText.Text = game.diskSize.ToStringWithPrecision(1);
+            downloadSizeText.Text = game.downloadSize.ToStringWithPrecision(1);
         }
 
         public InstallAppPopup(Library _library)

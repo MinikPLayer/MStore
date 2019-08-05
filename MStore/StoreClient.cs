@@ -183,6 +183,7 @@ port = 15332";
 
             while (!connected)
             {
+                //string packet = socket.WaitForReceive();
                 string packet = socket.WaitForReceive();
 
                 Debug.Log("Welcome Packet: " + packet);

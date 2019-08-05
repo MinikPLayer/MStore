@@ -21,6 +21,8 @@ namespace MStore.Login
     {
         public bool loggedIn = false;
 
+        public const bool debug = true;
+
         private void DebugAutoLog()
         {
             LoginTextBot.Text = "abcd";
@@ -34,8 +36,12 @@ namespace MStore.Login
         {
             InitializeComponent();
 
-            //Speed up debugging
-            //DebugAutoLog();
+
+            if (debug)
+            {
+                //Speed up debugging
+                DebugAutoLog();
+            }
 
             
         }
@@ -92,8 +98,10 @@ namespace MStore.Login
                         break;
                 }
 
-                
-                MessageBox.Show(message, "Login", MessageBoxButton.OK, MessageBoxImage.Error);
+                if (!debug)
+                {
+                    MessageBox.Show(message, "Login", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
 
            
@@ -125,9 +133,11 @@ namespace MStore.Login
 
             if (result == "RS:OK")
             {
-
-                //Debugging
-                MessageBox.Show("User " + LoginTextBot.Text + " successfully registered", "Register complete", MessageBoxButton.OK, MessageBoxImage.Information);
+                if (!debug)
+                {
+                    //Debugging
+                    MessageBox.Show("User " + LoginTextBot.Text + " successfully registered", "Register complete", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
             }
             else
             {   
@@ -139,9 +149,11 @@ namespace MStore.Login
                     message = "User " + LoginTextBot.Text + " is already registered";
                 }
 
-
-                //Debugging
-                MessageBox.Show(message, "Login", MessageBoxButton.OK, MessageBoxImage.Error);
+                if (!debug)
+                {
+                    //Debugging
+                    MessageBox.Show(message, "Login", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
 
             }
         }

@@ -71,7 +71,7 @@ namespace MStore
             size_str += (char)size;
             
             //Debug.Log("Size str lenth: " + size_str.Length);
-            //Debug.Log("Sending size_str: " + (int)(size_str[0]));
+            Debug.Log("Sending size_str: " + (int)(size_str[0]));
 
             Send_LowLevel(size_str);    // Length
 

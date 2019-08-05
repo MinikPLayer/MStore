@@ -28,5 +28,7 @@
 		<TextBlock x:Name="actuallyDownloadingName" HorizontalAlignment="Left" Margin="231,201,0,0" TextWrapping="Wrap" Text="None" VerticalAlignment="Top" FontSize="36" Width="848"/>
 		<ProgressBar Minimum="0" Maximum="100" x:Name="acutallyDownloadingProgressBar" HorizontalAlignment="Left" Height="33" Margin="231,286,0,0" VerticalAlignment="Top" Width="923"/>
 		<TextBlock x:Name="actuallyDownloadingPercentage" HorizontalAlignment="Left" Margin="1176,286,0,0" TextWrapping="Wrap" Text="100%" VerticalAlignment="Top" FontSize="24"/>
+		<TextBlock HorizontalAlignment="Left" Margin="231,349,0,0" TextWrapping="Wrap" Text="Speed:" VerticalAlignment="Top" FontSize="24"/>
+		<TextBlock x:Name="actuallyDownloadingSpeed" HorizontalAlignment="Left" Margin="322,349,0,0" TextWrapping="Wrap" Text="0B/s" VerticalAlignment="Top" FontSize="24" FontWeight="Bold"/>
 	</Grid>
 </Window>

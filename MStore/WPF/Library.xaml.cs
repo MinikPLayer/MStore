@@ -104,23 +104,87 @@ namespace MStore
                 static string[] sizeSuffixes = { "B", "KB", "MB", "GB", "TB", "PB" };
                 public override string ToString()
                 {
-                    int level = 0;
-                    long __bytes = bytes;
+                    return ToStringWithPrecision(0);
 
-                    while(__bytes > 1024)
+
+                }
+
+                /// <summary>
+                /// Creates string with decimal point precision based on precision integrer
+                /// </summary>
+                /// <param name="precision"></param>
+                /// <returns></returns>
+                public string ToStringWithPrecision(int precision, bool spaceBetween = true)
+                {
+                    int level = 0;
+                    double __bytes = bytes;
+
+                    string spaceChar = "";
+                    if(spaceBetween)
                     {
-                        __bytes /= 1024;
+                        spaceChar = " ";
+                    }
+
+                    while (__bytes > 1024)
+                    {
+                        __bytes = __bytes / 1024f;
                         level++;
                     }
 
-                    if(level >= sizeSuffixes.Length)
+                    if (level >= sizeSuffixes.Length)
                     {
                         return bytes.ToString();
                     }
 
-                    return __bytes.ToString() + sizeSuffixes[level];
+                    if(precision == 0)
+                    {
+                        //return __bytes.ToString() + sizeSuffixes[level];
+                        long bytesLong = (long)__bytes;
+                        return bytesLong.ToString();
+                    }
+
+                    /*string byteString = bytes.ToString();
+                    string __bytesString = __bytes.ToString();
+
+                    byteString.Insert(__bytesString.Length, ".");
 
 
+                    int removePoint = __bytesString.Length + precision;
+                    if(removePoint >= byteString.Length)
+                    {
+                        removePoint = byteString.Length - 1;
+                    }
+                    return byteString.Remove(removePoint) + sizeSuffixes[level];*/
+
+                    string __bytesString = __bytes.ToString();
+
+                    string returnValue = "";
+                    int index = -1;
+                    for(int i = 0;i<__bytesString.Length;i++)
+                    {
+                        returnValue += __bytesString[i];
+
+                        if(__bytesString[i] == '.' || __bytesString[i] == ',')
+                        {
+                            index = i;
+                            break;
+                        }
+                    }
+
+                    if (index == -1)
+                    {
+                        return __bytesString + spaceChar + sizeSuffixes[level];
+                    }
+
+                    for (int i = index + 1; i< index + 1 + precision && i < __bytesString.Length;i++)
+                    {
+                        returnValue += __bytesString[i];
+                    }
+
+
+                    return returnValue + spaceChar + sizeSuffixes[level];
+
+                    //return __bytes.ToString() + sizeSuffixes[level];
                 }
 
                 public static Size operator +(Size s1, long add)

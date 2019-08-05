@@ -37,6 +37,11 @@ namespace MStore
 
         string gameTextBlockPrefab = "";
 
+
+
+        public const int measureInterval = 100;
+        public Library.Game.Size[] measuredSizes = new Library.Game.Size[10];
+        private int measuredSizesIndex = 0;
         private void SetQueueTexts()
         {
             if(!downloadQueueView.Dispatcher.CheckAccess())
@@ -91,6 +96,27 @@ namespace MStore
             acutallyDownloadingProgressBar.Value = percentage;
 
             actuallyDownloadingPercentage.Text = ((int)percentage).ToString() + "%";
+
+
+            //Speed measure
+            measuredSizes[measuredSizesIndex].bytes = dwManager.downloadEngine.downloadedDataSize;
+            measuredSizesIndex++;
+            if(measuredSizesIndex == measuredSizes.Length)
+            {
+                measuredSizesIndex = 0;
+                long sum = 0;
+                for(int i = 1;i<measuredSizes.Length;i++)
+                {
+                    sum += measuredSizes[i].bytes - measuredSizes[i - 1].bytes;
+                }
+
+                long averge = (long)(sum / (float)(measuredSizes.Length - 1) * 1000f/measureInterval);
+
+                Library.Game.Size newSize = new Library.Game.Size(averge);
+
+                actuallyDownloadingSpeed.Text = newSize.ToStringWithPrecision(2) + "/s";
+            }
+            
         }
 
         private void SetEmptyMenu()
@@ -107,12 +133,14 @@ namespace MStore
                 {
                     //this.Content = new EmptyDownloadMenu().Content;
                     actuallyDownloadingName.Dispatcher.BeginInvoke(new Action(SetEmptyMenu));
+                    measuredSizes = new Library.Game.Size[10];
+                    measuredSizesIndex = 0;
                     return;
                 }
 
                 SetValues();
                 SetQueueTexts();
-                Thread.Sleep(100);
+                Thread.Sleep(measureInterval);
             }
         }
 
