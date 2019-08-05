@@ -336,7 +336,7 @@ port = 15332";
         public string SendUserCredentials(string username, string password)
         {
             Debug.Log("Sending username");
-            socket._Send(username + '\n');
+            socket._Send(username);
 
             Debug.Log("Waiting for \"N\" from server");
             string receive = socket.WaitForReceive(10);
@@ -347,13 +347,9 @@ port = 15332";
                 return receive;
             }
 
-            //Idk why
-            Thread.Sleep(50);
-
             Debug.Log("Sending password");
-            socket._Send(password + '\n');
+            socket._Send(password);
 
-            Thread.Sleep(50);
 
 
             Debug.Log("Waiting for \"N\" from server");

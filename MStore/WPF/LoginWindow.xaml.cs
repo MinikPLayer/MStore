@@ -21,7 +21,7 @@ namespace MStore.Login
     {
         public bool loggedIn = false;
 
-        public const bool debug = true;
+        public const bool debug = false;
 
         private void DebugAutoLog()
         {

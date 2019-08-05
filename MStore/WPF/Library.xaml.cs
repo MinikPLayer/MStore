@@ -39,7 +39,7 @@ namespace MStore
 
         private static List<Game> games = new List<Game>();
 
-        private Game actualGameSelected;
+        private static Game actualGameSelected;
 
         public string appPath = "./installed/";
 
