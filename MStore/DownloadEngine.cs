@@ -43,11 +43,11 @@ namespace MStore
 
 
 
-        public byte[] ReceiveDataRaw()
+        public byte[] ReceiveDataRaw(long gameBytesSize = -1)
         {
             client.dataRawReceived = SaveToFile;
 
-            return client.WaitForReceiveRaw(5f, false, false);
+            return client.WaitForReceiveRaw(5f, false, false, gameBytesSize);
         }
 
         private bool AuthenticateClient(string token)
@@ -192,8 +192,17 @@ namespace MStore
             //string testReceive = client.WaitForReceive();
             //Debug.Log("Test receive: " + testReceive);
 
+            long size = -1;
+
+            Library.Game game = Library.FindGame(id);
+            if(game != null)
+            {
+                size = game.downloadSize.bytes;
+                Debug.Log("Download bytes: " + size);
+            }
+
             //Download
-            ReceiveDataRaw();
+            ReceiveDataRaw(size);
 
             stream.Close();
             Debug.Log("Closed stream");

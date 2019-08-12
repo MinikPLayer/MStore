@@ -23,6 +23,8 @@ namespace MStore
         public EmptyDownloadMenu()
         {
             InitializeComponent();
+
+            NavBar.SetMode(Controls.NavBar.Modes.Download);
         }
     }
 }

@@ -113,6 +113,9 @@
     <Compile Include="WPF\InstallAppPopup.xaml.cs">
       <DependentUpon>InstallAppPopup.xaml</DependentUpon>
     </Compile>
+    <Compile Include="WPF\Store.xaml.cs">
+      <DependentUpon>Store.xaml</DependentUpon>
+    </Compile>
     <Compile Include="WPF\LoginWindow.xaml.cs">
       <DependentUpon>LoginWindow.xaml</DependentUpon>
     </Compile>
@@ -145,6 +148,10 @@
     <Page Include="WPF\InstallAppPopup.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="WPF\Store.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="WPF\LoginWindow.xaml">
       <SubType>Designer</SubType>

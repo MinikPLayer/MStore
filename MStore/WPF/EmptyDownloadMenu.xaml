@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="DownloadMenu" Height="720" Width="1280">
 	<Grid Background="{StaticResource BackgroundBrush}">
-		<local:NavBar HorizontalAlignment="Left" Margin="10,8,0,0" VerticalAlignment="Top" Width="1248" RenderTransformOrigin="0.5,0.5">
+        <local:NavBar x:Name="NavBar" HorizontalAlignment="Left" Margin="10,8,0,0" VerticalAlignment="Top" Width="1248" RenderTransformOrigin="0.5,0.5">
 			<local:NavBar.RenderTransform>
 				<TransformGroup>
 					<ScaleTransform/>

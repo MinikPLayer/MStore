@@ -306,7 +306,7 @@ namespace MStore
             }*/
         }
 
-        private void _Receive(float timeout, bool clearReceive = true, bool receiveMessageCode = true, bool useString = true)
+        private void _Receive(float timeout, bool clearReceive = true, bool receiveMessageCode = true, bool useString = true, long bytesToReceive = -1)
         {
             if (clearReceive)
             {
@@ -315,7 +315,7 @@ namespace MStore
 
             byte size = 0;
 
-
+            long totalBytesReceived = 0;
 
             Stopwatch overrallWatch = new Stopwatch();
 
@@ -395,7 +395,16 @@ namespace MStore
 
                 }
 
-                
+                totalBytesReceived += size;
+
+                if(bytesToReceive != -1)
+                {
+                    if(totalBytesReceived >= bytesToReceive)
+                    {
+                        break;
+                    }
+                }
+
 
             } while (size >= 255);
 
@@ -427,9 +436,9 @@ namespace MStore
             return data;
         }
 
-        public byte[] WaitForReceiveRaw(float timeout = 5f, bool receiveMessageCode = true, bool useString = false)
+        public byte[] WaitForReceiveRaw(float timeout = 5f, bool receiveMessageCode = true, bool useString = false, long bytesToReceive = -1)
         {
-            _Receive(timeout, true, receiveMessageCode, useString);
+            _Receive(timeout, true, receiveMessageCode, useString, bytesToReceive);
             //byte[] data = rawReceivedata.ToArray();
             byte[] data = rawReceivedata;
             receiveData = "";

@@ -29,7 +29,7 @@ namespace MStore
     /// <summary>
     /// Logika interakcji dla klasy Library.xaml
     /// </summary>
-    public partial class Library : Window
+    public partial class Store : Window
     {
         public static StoreClient client;
 
@@ -41,38 +41,10 @@ namespace MStore
 
         private static Game actualGameSelected;
 
-        public static string appPath = "./installed/";
-        public static string iconsPath = "./icons/";
-
-        public static User userInfo = new User();
-
         private int gamesSPGamesStartIndex = -1;
 
         private ImageSource originalIcon;
 
-
-        public static DownloadManager iconsDownloader;
-
-        public class User
-        {
-            public string userName = "";
-            public string token = "";
-            public Int64 id = -1;
-            public Int64 coins = -1;
-
-            public User(string _userName, string _token, Int64 _id, Int64 _coins)
-            {
-                userName = _userName;
-                token = _token;
-                id = _id;
-                coins = _coins;
-            }
-
-            public User()
-            {
-
-            }
-        }
 
         public class Game
         {
@@ -81,17 +53,6 @@ namespace MStore
 
             public string price = "";
 
-            public string path = "";
-            public string fileName = "";
-
-            public string execName = "";
-
-            public Size diskSize = new Size(-1);
-            public Size downloadSize = new Size(-1);
-
-            public Size alreadyDownloaded = new Size(-1);
-
-            public bool installed = false;
             //Icon
 
             public Game(string gameName, int gameID)
@@ -266,11 +227,11 @@ namespace MStore
 
         private void DisplayNoGamesInfo()
         {
-            RunButton.Visibility = Visibility.Hidden;
-
-            UninstallButton.Visibility = Visibility.Hidden;
+            BuyButton.Visibility = Visibility.Hidden;
 
             GameIcon.Visibility = Visibility.Hidden;
+
+            PriceText.Visibility = Visibility.Hidden;
         }
 
         private void DisplayGameInfo(Game game)
@@ -281,21 +242,14 @@ namespace MStore
 
             GameTitle.Text = game.name;
 
-            RunButton.Visibility = Visibility.Visible;
+            BuyButton.Visibility = Visibility.Visible;
 
             //Disable if icon is not downloaded
             GameIcon.Visibility = Visibility.Visible;
 
-            if(game.installed)
-            {
-                RunButton.Content = "Run";
-                UninstallButton.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                RunButton.Content = "Install";
-                UninstallButton.Visibility = Visibility.Hidden;
-            }
+            PriceText.Visibility = Visibility.Visible;
+
+            PriceText.Text = game.price;
         }
 
         //DO POPRAWY
@@ -329,17 +283,9 @@ namespace MStore
         {
             if(GameListTextTemplate.Text == "")
             {
+                Debug.Log("Changing list text exmaple to " + game.name);
                 GameListTextTemplate.Text = game.name;
                 GameListTextTemplate.MouseLeftButtonDown += OnGameTextClick;
-
-                if (!game.installed)
-                {
-                    GameListTextTemplate.Foreground = notInstalledColor;
-                }
-                else
-                {
-                    GameListTextTemplate.Foreground = installedColor;
-                }
 
                 return;
             }
@@ -352,41 +298,22 @@ namespace MStore
 
             newButton.MouseLeftButtonDown += OnGameTextClick;
 
-            if(!game.installed)
-            {
-                newButton.Foreground = notInstalledColor;
-            }
-            else
-            {
-                newButton.Foreground = installedColor;
-            }
-
             GamesSP.Children.Add(newButton);
         }
 
-        public Library()
+        public Store()
         {
             InitializeComponent();
-            
-            if(App.library == null)
-            {
-                App.library = this;
-            }
 
-            if (client == null)
+            bool firstRun = false;
+            if(client == null)
             {
-                if (Directory.Exists(iconsPath))
-                {
-                    Directory.Delete(iconsPath, true);
-                }
-                Directory.CreateDirectory(iconsPath);
+                firstRun = true;
             }
 
             client = App.storeClient;
-            iconsDownloader = new DownloadManager(client.ipAddress, client.downloadIconsPort);
 
             originalIcon = GameIcon.Source;
-
 
             gameTextBlockPrefab = XamlWriter.Save(GameListTextTemplate);
 
@@ -396,105 +323,20 @@ namespace MStore
             //newButton.Text = "Fortnite";
             //newButton.MouseLeftButtonDown += OnGameTextClick;
 
-            Navbar.SetMode(Controls.NavBar.Modes.Library);
-
-            GetUserInfo();
-
-            Debug.Log("User info: ");
-            Debug.Log("ID: " + userInfo.id);
-            Debug.Log("Username: " + userInfo.userName);
-            Debug.Log("Token: " + userInfo.token);
+            NavBar.SetMode(Controls.NavBar.Modes.Store);
 
             gamesSPGamesStartIndex = GamesSP.Children.Count;
 
-            GetGamesList();
+            GetGamesList(firstRun);
+
+            CoinsNumberText.Text = Library.userInfo.coins.ToString();
 
 
             //client.DownloadGame(0, userInfo.token);
 
         }
 
-        private void GetUserInfo(bool force = false)
-        {
-            
-            if(userInfo.id != -1 && !force)
-            {
-                return;
-            }
-
-            Debug.Log("Getting user info...");
-
-            string data = client.RequestUserInfo();
-
-            if(data.Length < 5)
-            {
-                Debug.LogError("Some sort of error, user info is less than 5 chars long");
-                return;
-            }
-
-            userInfo = new User();
-
-            string info = "";
-
-
-            //user id
-            data = GetStringToSpecialCharAndDelete(data, '\n', out info);
-
-
-            Int64 _id;
-            if(Int64.TryParse(info, out _id))
-            {
-                userInfo.id = _id;
-            }
-            else
-            {
-                Debug.LogError("Cannot parse \"" + info + "\" to Int64");
-                return;
-            }
-
-
-            //Token
-            data = GetStringToSpecialCharAndDelete(data, '\n', out info);
-
-            if(info.Length > 0)
-            {
-                userInfo.token = info;
-            }
-            else
-            {
-                Debug.LogError("Cannot parse \"" + info + "\" to string");
-                return;
-            }
-
-            //Username
-            data = GetStringToSpecialCharAndDelete(data, '\n', out info);
-
-            if (info.Length > 0)
-            {
-                userInfo.userName = info;
-            }
-            else
-            {
-                Debug.LogError("Cannot parse \"" + info + "\" to string");
-                return;
-            }
-
-            //Coins
-            data = GetStringToSpecialCharAndDelete(data, '\n', out info);
-
-
-            Int64 coins;
-            if (Int64.TryParse(info, out coins))
-            {
-                userInfo.coins = coins;
-            }
-            else
-            {
-                Debug.LogError("Cannot parse \"" + info + "\" to coins ( Int64 )");
-                return;
-            }
-
-        }
+      
 
 
         private string GetStringToSpecialChar(string str, char specialChar)
@@ -521,7 +363,14 @@ namespace MStore
         {
             strToSpecialChar = GetStringToSpecialChar(str, specialChar);
 
-            return str.Remove(0, strToSpecialChar.Length + 1);
+            if (str.Length > strToSpecialChar.Length)
+            {
+                return str.Remove(0, strToSpecialChar.Length + 1);
+            }
+            else
+            {
+                return "";
+            }
         }
 
         private Game ParseStringToGame(string gameInfo)
@@ -547,124 +396,50 @@ namespace MStore
             game.price = data;
 
 
-            gameInfo = GetStringToSpecialCharAndDelete(gameInfo, '\n', out data);
-            game.path = data;
-
-
-            gameInfo = GetStringToSpecialCharAndDelete(gameInfo, '\n', out data);
-            game.fileName = data;
-
-
-            gameInfo = GetStringToSpecialCharAndDelete(gameInfo, '\n', out data);
-            game.execName = data;
-
-            //Size
-            gameInfo = GetStringToSpecialCharAndDelete(gameInfo, '\n', out data);
-            if(!long.TryParse(data, out game.downloadSize.bytes))
-            {
-                Debug.LogError("Cannot parse \"" + data + "\" ( download size ) to long");
-            }
-
-            gameInfo = GetStringToSpecialCharAndDelete(gameInfo, '\n', out data);
-            if (!long.TryParse(data, out game.diskSize.bytes))
-            {
-                Debug.LogError("Cannot parse \"" + data + "\" ( disk size ) to long");
-            }
-
-
             return game;
-        }
-
-        public bool CheckIfGameIsInstalled(Game game)
-        {
-            if (Directory.Exists(appPath + game.path)) return true;
-            return false;
-        }
-
-        public void MarkInstalledGames()
-        {
-            for(int i = 0;i<games.Count;i++)
-            {
-                if(CheckIfGameIsInstalled(games[i]))
-                {
-                    games[i].installed = true;
-                }
-                else
-                {
-                    games[i].installed = false;
-                }
-            }
         }
 
         public void GetGamesList(bool forceRefresh = false)
         {
+
             if (games.Count == 0 || forceRefresh)
             {
-                string library = client.RecquestLibrary();
+
+                string gamesList = client.RequestStoreGamesList();
+                List<string> _games = new List<string>();
 
                 games = new List<Game>();
 
-                Debug.Log("Library:");
-                Debug.Log("\n\n");
-                Debug.Log("\"" + library + "\"");
-                Debug.Log("\n\n");
-
-                int gameListSize = 0;
-
-                for (int i = 0; i < library.Length; i++)
+                if(gamesList[0] == '\0' )
                 {
-                    if (library[i] == '\n')
-                    {
-                        gameListSize++;
-                    }
+                    RefreshGamesDisplay();
+                    return;
                 }
 
-                Int64[] gamesIDs = new Int64[gameListSize];
-
-
-                string gameID = "";
-                int actualGame = 0;
-                for (int i = 0; i < library.Length; i++)
+                if(gamesList == "NA")
                 {
-                    if (library[i] == '\n')
-                    {
-                        long id = -1;
-                        if (!long.TryParse(gameID, out gamesIDs[actualGame]))
-                        {
-                            Debug.LogError("Cannot parse " + gameID);
-                        }
-                        else
-                        {
-                            Debug.Log("Added new game id: " + gameID);
-                            actualGame++;
-                        }
-
-                        
-
-                        gameID = "";
-                    }
-                    else
-                    {
-                        gameID += library[i];
-                    }
+                    Debug.LogError("User not authorised");
+                    return;
+                }
+                
+                while(gamesList.Length != 0)
+                {
+                    string line = "";
+                    gamesList = GetStringToSpecialCharAndDelete(gamesList, '\r', out line);
+                    _games.Add(line);
                 }
 
-                for (int i = 0; i < gameListSize; i++)
+                Debug.Log("Got " + _games.Count + " games from store");
+
+                for(int i = 0;i< _games.Count;i++)
                 {
-                    Game game = ParseStringToGame(client.RequestGameInfo(gamesIDs[i]));
-                    Debug.Log("Info for the game with id " + gamesIDs[i] + ": ");
-                    if (game == null)
+                    Game game = ParseStringToGame(_games[i]);
+                    Debug.Log("Game id: " + game.id + " with name: " + game.name);
+                    if(game != null)
                     {
-                        Debug.LogError("Something gone desperatelly wrong, game info not found in client memory");
+                        //AddGameToTheList(game);
+                        games.Add(game);
                     }
-                    Debug.Log("id: " + game.id);
-                    Debug.Log("Name: " + game.name);
-                    Debug.Log("Price: " + game.price);
-
-
-                    games.Add(game);
-
-                    //AddGameToTheList(game);
                 }
             }
 
@@ -700,11 +475,11 @@ namespace MStore
         {
             Debug.Log("Loading " + gameID.ToString() + " icon");
 
-            string _path = AppDomain.CurrentDomain.BaseDirectory + iconsPath + gameID.ToString() + "_0.png";
+            string _path = AppDomain.CurrentDomain.BaseDirectory + Library.iconsPath + gameID.ToString() + "_0.png";
 
             if(!File.Exists(_path))
             {
-                iconsDownloader.DownloadIcon(gameID, userInfo.token, _path, IconDownloaded);
+                Library.iconsDownloader.DownloadIcon(gameID, Library.userInfo.token, _path, IconDownloaded);
                 //GameIcon.Source = null;//originalIcon;
                 BitmapImage image = null;
                 SetNewIcon(image);
@@ -788,7 +563,7 @@ namespace MStore
 
             SortGamesAlphabetically();
 
-            MarkInstalledGames();
+
 
             for (int i = 0; i < games.Count; i++)
             {
@@ -879,150 +654,10 @@ namespace MStore
             games = newGamesList;
         }
 
-        public void GameInstalled(DownloadEngine.DownloadStatus status, long id, DownloadManager.DownloadTypes type)
-        {
-            Debug.LogWarning("Game installation status: " + status);
-
-            if(status != DownloadEngine.DownloadStatus.success)
-            {
-                return;
-            }
-
-            Game game = FindGame(id);
-            if(game == null)
-            {
-                Debug.LogError("Something went desperately wrong, downloaded game not found");
-                return;
-            }
-
-            UnpackGame(game);
-
-            game.installed = true;
-
-            //RefreshGamesDisplay();
-            if (!GameListTextTemplate.Dispatcher.CheckAccess())
-            {
-                GameListTextTemplate.Dispatcher.Invoke(new Action(RefreshGamesDisplay));
-                return;
-            }
-        }
-
-        public void UnpackGame(Game game)
-        {
-            if(!Directory.Exists(appPath + game.path))
-            {
-                Directory.CreateDirectory(appPath + game.path);
-            }
-            ZipFile.ExtractToDirectory(StoreClient.gamesPath + game.path + game.fileName, appPath + game.path);
-        }
-
-        public void InstallGameUserDecided(Game game, InstallAppPopup.UserChoose choose)
-        {
-            DownloadEngine engine;
-            if(choose == InstallAppPopup.UserChoose.install)
-            {
-                Debug.Log("User token: \"" + userInfo.token + "\"");
-                engine = client.DownloadGame(game.id, userInfo.token, GameInstalled);
-
-                /*Thread.Sleep(50);
-
-                //while(engine.downloadedDataSize < game.downloadSize.bytes)
-                while(!game.installed)
-                {
-                    while(client.downloadManager.downloadEngine == null)
-                    {
-                        Thread.Sleep(10);
-                    }
-                    Thread.Sleep(50);
-                    //Debug.Log("Downloaded " + engine.downloadedDataSize + " bytes");
-                    Debug.Log("Downloaded " + (client.downloadManager.downloadEngine.downloadedDataSize * 100f / game.downloadSize.bytes).ToString() + "%");
-                }*/
-            }
-
-            
-        }
-
-        public void InstallGame(Game game)
-        {
-            //client.DownloadGame(game.id, userInfo.token, GameInstalled);
-            InstallAppPopup installAppPopup = new InstallAppPopup(this);
-            installAppPopup.DisplayGameInfo(game);
-            installAppPopup.userChoseFunction = InstallGameUserDecided;
-            
 
 
-            installAppPopup.ShowDialog();
-        }
-
-        public void RunGame(Game game)
-        {
-            string runPath = AppDomain.CurrentDomain.BaseDirectory + appPath + game.path + game.execName;
-            if (File.Exists(runPath))
-            {
-                Process myProcess = new Process();
-                myProcess.StartInfo.FileName = runPath;
-                myProcess.StartInfo.WorkingDirectory = AppDomain.CurrentDomain.BaseDirectory + appPath + game.path;
-                myProcess.Start();
-            }
-            else
-            {
-                Debug.LogError("Error running " + game.name + ", missing executable");
-            }
-        }
-
-        public void InstallOrRunGame(Game game)
-        {
-            if (game.installed)
-            {
-                RunGame(game);
-            }
-            else
-            {
-                InstallGame(game);
-            }
-        }
 
 
-        public void UninstallGame(Game game)
-        {
-
-            ConfirmationWindow confirm = new ConfirmationWindow();
-            confirm.ShowDialog();
-
-            if (confirm.value)
-            {
-
-                string _path = appPath + game.path;
-
-                if (Directory.Exists(_path))
-                {
-
-
-                    Directory.Delete(_path, true);
-                }
-
-                RefreshGamesDisplay();
-            }
-
-        }
-
-        public void NewGameBought(Int64 id)
-        {
-            GetUserInfo(true);
-
-            GetGamesList(true);
-
-            Game game = FindGame(id);
-            if(game != null)
-            {
-                actualGameSelected = game;
-                DisplayGameInfo(game);
-            }
-            else
-            {
-                Debug.LogError("Idk, new bought game not found...");
-            }
-        }
 
         // Buttons clicks
 
@@ -1031,20 +666,43 @@ namespace MStore
             PageManager.SetPage(new Menu().Content);
         }
 
-
-        /// <summary>
-        /// Run / install button
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void RunButton_Click(object sender, RoutedEventArgs e)
+        private void BuyButton_Click(object sender, RoutedEventArgs e)
         {
-            InstallOrRunGame(actualGameSelected);
-        }
+            ConfirmationWindow confirmation = new ConfirmationWindow();
+            confirmation.ShowDialog();
 
-        private void UninstallButton_Click(object sender, RoutedEventArgs e)
-        {
-            UninstallGame(actualGameSelected);
+            if(confirmation.value == false)
+            {
+                return;
+            }
+
+            string response = client.RequestBuyGame(actualGameSelected.id);
+            if(response == "OK")
+            {
+                Debug.Log("Game bought!");
+
+                App.library.NewGameBought(actualGameSelected.id);
+            }
+            else
+            {
+                //Debug.Log("Something went wrong, response: " + response);
+                if(response == "TP")
+                {
+                    MessageBox.Show("Not enough coins to buy this game", "ERROR", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+                else if(response == "NA")
+                {
+                    MessageBox.Show("Session expired, try restarting app", "ERROR", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+                else if(response == "NF")
+                {
+                    MessageBox.Show("Game not found on server, are You doing somethig sketchy???", "ERROR", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+                else if(response == "AB")
+                {
+                    MessageBox.Show("Are you trying to buy this game again? NO! You won't spend money on something You have", "ERROR", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
         }
     }
 }

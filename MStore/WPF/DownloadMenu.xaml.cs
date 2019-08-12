@@ -208,6 +208,8 @@ namespace MStore
 
             dwManager = Library.client.downloadManager;
 
+            NavBar.SetMode(Controls.NavBar.Modes.Download);
+
             if(dwManager == null || dwManager.queue.Count == 0)
             {
                 Debug.Log("Nothing to show here");

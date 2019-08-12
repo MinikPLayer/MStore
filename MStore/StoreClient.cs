@@ -244,6 +244,8 @@ port = 15332";
             requestLibrary,
             gameInfo,
             userInfo,
+            storeGamesList,
+            buyGame
         }
 
         private void SendCommand(Commands command, string parameters = "")
@@ -264,6 +266,12 @@ port = 15332";
                     break;
                 case Commands.userInfo:
                     socket._Send("URNFO" + parameters);
+                    break;
+                case Commands.storeGamesList:
+                    socket._Send("SGLST" + parameters);
+                    break;
+                case Commands.buyGame:
+                    socket._Send("BGAME" + parameters);
                     break;
             }
         }
@@ -344,6 +352,20 @@ port = 15332";
             //downloadEngine.DownloadGame(id, gamesPath + game.path + game.fileName, downloadCompleteFunction);
 
             return downloadManager.DownloadGame(id, token, gamesPath + game.path + game.fileName, downloadCompleteFunction);
+        }
+
+        public string RequestBuyGame(Int64 id)
+        {
+            SendCommand(Commands.buyGame, id.ToString());
+
+            return socket.WaitForReceive();
+        }
+
+        public string RequestStoreGamesList()
+        {
+            SendCommand(Commands.storeGamesList);
+
+            return socket.WaitForReceive();
         }
 
         public string RequestUserInfo()

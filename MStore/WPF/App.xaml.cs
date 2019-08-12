@@ -20,6 +20,7 @@ namespace MStore
     public partial class App : Application
     {
         public static StoreClient storeClient;
+        public static Library library;
         private Thread storeClientThread;
 
         private Thread appThread;
