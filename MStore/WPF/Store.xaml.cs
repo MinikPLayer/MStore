@@ -682,6 +682,24 @@ namespace MStore
                 Debug.Log("Game bought!");
 
                 App.library.NewGameBought(actualGameSelected.id);
+
+                CoinsNumberText.Text = Library.userInfo.coins.ToString();
+
+                GetGamesList(true);
+
+
+                RefreshGamesDisplay();
+
+
+                if (games.Count > 0)
+                {
+                    actualGameSelected = games[0];
+                    DisplayGameInfo(actualGameSelected);
+                }
+                else
+                {
+                    DisplayNoGamesInfo();
+                }
             }
             else
             {
@@ -701,6 +719,63 @@ namespace MStore
                 else if(response == "AB")
                 {
                     MessageBox.Show("Are you trying to buy this game again? NO! You won't spend money on something You have", "ERROR", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
+
+        private void UserVoucherButton_Click(object sender, RoutedEventArgs e)
+        {
+            VoucherWindow voucher = new VoucherWindow();
+            voucher.ShowDialog();
+
+            if(voucher.voucherCode.Length > 0)
+            {
+                string response = client.SendVoucher(voucher.voucherCode);
+
+                switch (response)
+                {
+                    case "OK":
+                        MessageBox.Show("Voucher successfully used", "Voucher", MessageBoxButton.OK, MessageBoxImage.Information);
+                        App.library.GetUserInfo(true);
+                        App.library.GetGamesList(true);
+
+                        CoinsNumberText.Text = Library.userInfo.coins.ToString();
+
+                        GetGamesList(true);
+                        
+
+                        RefreshGamesDisplay();
+
+                        if(games.Count > 0)
+                        {
+                            actualGameSelected = games[0];
+                            DisplayGameInfo(actualGameSelected);
+                        }
+                        else
+                        {
+                            DisplayNoGamesInfo();
+                        }
+                        break;
+
+                    case "NA":
+                        MessageBox.Show("User not authorised", "ERROR", MessageBoxButton.OK, MessageBoxImage.Error);
+                        break;
+
+                    case "BA":
+                        MessageBox.Show("Bad code", "ERROR", MessageBoxButton.OK, MessageBoxImage.Error);
+                        break;
+
+                    case "BV":
+                        MessageBox.Show("Bad Voucher", "ERROR", MessageBoxButton.OK, MessageBoxImage.Error);
+                        break;
+
+                    case "NF":
+                        MessageBox.Show("Voucher game not found on server", "ERROR", MessageBoxButton.OK, MessageBoxImage.Error);
+                        break;
+
+                    default:
+                        MessageBox.Show("Unknown error", "ERROR", MessageBoxButton.OK, MessageBoxImage.Error);
+                        break;
                 }
             }
         }

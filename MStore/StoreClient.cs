@@ -245,7 +245,8 @@ port = 15332";
             gameInfo,
             userInfo,
             storeGamesList,
-            buyGame
+            buyGame,
+            sendVoucher,
         }
 
         private void SendCommand(Commands command, string parameters = "")
@@ -272,6 +273,9 @@ port = 15332";
                     break;
                 case Commands.buyGame:
                     socket._Send("BGAME" + parameters);
+                    break;
+                case Commands.sendVoucher:
+                    socket._Send("VCHER" + parameters);
                     break;
             }
         }
@@ -352,6 +356,13 @@ port = 15332";
             //downloadEngine.DownloadGame(id, gamesPath + game.path + game.fileName, downloadCompleteFunction);
 
             return downloadManager.DownloadGame(id, token, gamesPath + game.path + game.fileName, downloadCompleteFunction);
+        }
+
+        public string SendVoucher(string code)
+        {
+            SendCommand(Commands.sendVoucher, code);
+
+            return socket.WaitForReceive();
         }
 
         public string RequestBuyGame(Int64 id)

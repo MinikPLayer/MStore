@@ -414,7 +414,7 @@ namespace MStore
 
         }
 
-        private void GetUserInfo(bool force = false)
+        public void GetUserInfo(bool force = false)
         {
             
             if(userInfo.id != -1 && !force)

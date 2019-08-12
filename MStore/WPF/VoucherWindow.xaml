@@ -1,0 +1,24 @@
+﻿<Window x:Class="MStore.VoucherWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MStore"
+        mc:Ignorable="d"
+        Title="ConfirmationWindow" Height="185.304" Width="268.381">
+    <Grid Background="{StaticResource BackgroundBrush}">
+        <TextBlock HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="Voucher:" VerticalAlignment="Top" Width="230" TextAlignment="Center" FontSize="22" FontWeight="Bold" Foreground="{DynamicResource TextColor}"/>
+        <TextBox x:Name="VoucherBox" MaxLength="14" HorizontalAlignment="Left" Height="37" Margin="10,63,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="232" TextAlignment="Center" FontSize="22" RenderTransformOrigin="0.5,0.5" AcceptsReturn="false" Background="#3FFFFFFF" Foreground="White" >
+            <TextBox.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform AngleY="-0.118"/>
+                    <RotateTransform/>
+                    <TranslateTransform Y="-0.248"/>
+                </TransformGroup>
+            </TextBox.RenderTransform>
+        </TextBox>
+        <Button x:Name="SubmitButton" Content="Submit" HorizontalAlignment="Left" Margin="88,117,0,0" VerticalAlignment="Top" Width="74" BorderBrush="#00707070" Background="#265DFF00" Foreground="White" Click="SubmitButton_Click"/>
+
+    </Grid>
+</Window>

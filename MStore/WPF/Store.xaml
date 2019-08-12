@@ -32,6 +32,7 @@
         <TextBlock x:Name="PriceText" HorizontalAlignment="Left" Margin="475,230,0,0" TextWrapping="Wrap" Text="Unknown price" VerticalAlignment="Top" Foreground="{DynamicResource TextColor}" FontSize="22" Width="164"/>
         <TextBlock HorizontalAlignment="Left" Margin="316,127,0,0" TextWrapping="Wrap" Text="Coins: " VerticalAlignment="Top" Foreground="{DynamicResource TextColor}" FontSize="18"/>
         <TextBlock x:Name="CoinsNumberText" HorizontalAlignment="Left" Margin="374,127,0,0" TextWrapping="Wrap" Text="2955231" VerticalAlignment="Top" FontSize="18" Foreground="#FFFFF300" Width="258" FontWeight="Bold"/>
+        <Button x:Name="UserVoucherButton" Content="Use Voucher" HorizontalAlignment="Left" Margin="1097,630,0,0" VerticalAlignment="Top" Width="165" Height="49" FontSize="20" Background="#26DDDDDD" Foreground="{DynamicResource TextColor}" Click="UserVoucherButton_Click"/>
 
 
 

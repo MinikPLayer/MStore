@@ -101,6 +101,9 @@
       <DependentUpon>Blank.xaml</DependentUpon>
     </Compile>
     <Compile Include="ClientEngine.cs" />
+    <Compile Include="WPF\VoucherWindow.xaml.cs">
+      <DependentUpon>VoucherWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="WPF\ConfirmationWindow.xaml.cs">
       <DependentUpon>ConfirmationWindow.xaml</DependentUpon>
     </Compile>
@@ -132,6 +135,10 @@
     <Page Include="WPF\Blank.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="WPF\VoucherWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="WPF\ConfirmationWindow.xaml">
       <SubType>Designer</SubType>
