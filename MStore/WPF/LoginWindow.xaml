@@ -6,16 +6,21 @@
         xmlns:local="clr-namespace:MStore.Login"
         mc:Ignorable="d"
         Title="LoginWindow" Height="460" Width="400" ResizeMode="CanMinimize">
-	<Grid Height="459" Margin="0,0,-6,-28">
-		<TextBlock HorizontalAlignment="Left" Margin="31,152,0,0" TextWrapping="Wrap" Text="Login:" VerticalAlignment="Top" Height="35" Width="76" FontSize="23" LineHeight="6"/>
-		<TextBlock HorizontalAlignment="Left" Margin="31,212,0,0" TextWrapping="Wrap" Text="Hasło:" VerticalAlignment="Top" Height="35" Width="76" FontSize="23" LineHeight="6"/>
-		<TextBox Padding="6" HorizontalAlignment="Left" Height="35" Margin="112,152,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Width="222" TextAlignment="Center" FontSize="16" FontFamily="SimSun" Name="LoginTextBot"/>
-		<PasswordBox Padding="4" HorizontalAlignment="Left" Height="35" Margin="112,212,0,0" TextBlock.TextAlignment="Center" TextBlock.FontSize="16" VerticalAlignment="Top" Width="222" Name="PasswordTextBox"/>
-		<Button Content="Login" HorizontalAlignment="Left" Margin="30,356,0,0" VerticalAlignment="Top" Width="140" RenderTransformOrigin="0.5,0.5" Height="36" Name="LoginButton" Click="LoginButton_Click"/>
-		<Image HorizontalAlignment="Left" Height="100" Margin="15,10,0,0" VerticalAlignment="Top" Width="356" Source="/MStore;component/Images/MServer banner2.png">
-		</Image>
-		<Button Content="Register" HorizontalAlignment="Left" Margin="230,356,0,0" VerticalAlignment="Top" Width="140" RenderTransformOrigin="0.5,0.5" Height="36" x:Name="RegisterButton" Click="RegisterButton_Click"/>
+
+    <Grid Height="459" Margin="0,0,-6,-28" Background="{StaticResource BackgroundBrush}">
+        <TextBlock HorizontalAlignment="Left" Margin="31,152,0,0" TextWrapping="Wrap" Text="Login:" VerticalAlignment="Top" Height="35" Width="76" FontSize="23" LineHeight="6" TextAlignment="Right" Foreground="{DynamicResource TextColor}"/>
+        <TextBlock HorizontalAlignment="Left" Margin="0,212,0,0" TextWrapping="Wrap" Text="Password:" VerticalAlignment="Top" Height="35" Width="107" FontSize="23" LineHeight="6" TextAlignment="Right" Foreground="{DynamicResource TextColor}"/>
+        <TextBox Padding="6" HorizontalAlignment="Left" Height="35" Margin="112,152,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Width="222" TextAlignment="Center" FontSize="16" FontFamily="SimSun" Name="LoginTextBox"/>
+        <PasswordBox Padding="4" HorizontalAlignment="Left" Height="35" Margin="112,212,0,0" TextBlock.TextAlignment="Center" TextBlock.FontSize="16" VerticalAlignment="Top" Width="222" Name="PasswordTextBox"/>
+        <Button Content="Login" HorizontalAlignment="Left" Margin="30,356,0,0" VerticalAlignment="Top" Width="140" RenderTransformOrigin="0.5,0.5" Height="36" Name="LoginButton" Click="LoginButton_Click"/>
+        <Image HorizontalAlignment="Left" Height="100" Margin="15,10,0,0" VerticalAlignment="Top" Width="356" Source="/MStoreApp;component/Images/MServer banner2.png"/>
+        <Button Content="Register" HorizontalAlignment="Left" Margin="230,356,0,0" VerticalAlignment="Top" Width="140" RenderTransformOrigin="0.5,0.5" Height="36" x:Name="RegisterButton" Click="RegisterButton_Click"/>
+        <CheckBox x:Name="RememberMeSwitch" Content="Remeber me" HorizontalAlignment="Left" Margin="30,295,0,0" VerticalAlignment="Top" Width="131" Height="17" Foreground="{DynamicResource TextColor}" >
+            <CheckBox.LayoutTransform>
+                <ScaleTransform ScaleX="1.5" ScaleY="1.5" />
+            </CheckBox.LayoutTransform>
+        </CheckBox>
 
 
-	</Grid>
+    </Grid>
 </Window>

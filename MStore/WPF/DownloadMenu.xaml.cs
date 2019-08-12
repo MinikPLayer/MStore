@@ -37,7 +37,7 @@ namespace MStore
 
         string gameTextBlockPrefab = "";
 
-
+        private long lastGameID = -1;
 
         public const int measureInterval = 100;
         public Library.Game.Size[] measuredSizes = new Library.Game.Size[10];
@@ -91,6 +91,13 @@ namespace MStore
 
             actuallyDownloadingName.Text = game.name;
 
+            if(dwManager.downloadEngine == null)
+            {
+                Debug.LogError("Download engine is null");
+                Thread.Sleep(1000);
+                return;
+            }
+
             double percentage = dwManager.downloadEngine.downloadedDataSize * 100f / game.downloadSize.bytes;
 
             acutallyDownloadingProgressBar.Value = percentage;
@@ -116,7 +123,54 @@ namespace MStore
 
                 actuallyDownloadingSpeed.Text = newSize.ToStringWithPrecision(2) + "/s";
             }
-            
+
+
+            if(lastGameID != game.id)
+            {
+                string iconPath = AppDomain.CurrentDomain.BaseDirectory + Library.iconsPath + game.id.ToString() + "_1.png";
+
+                if (File.Exists(iconPath))
+                {
+                    actuallyDownloadingIcon.Source = new BitmapImage(new Uri(iconPath));
+                    lastGameID = game.id;
+                }
+                else
+                {
+                    Library.iconsDownloader.DownloadIcon(game.id, Library.userInfo.token, iconPath, IconDownloaded, false, true);
+                    lastGameID = game.id;
+                }
+                
+            }
+        }
+
+        private void SetIcon(string path)
+        {
+            if(!actuallyDownloadingIcon.Dispatcher.CheckAccess())
+            {
+                actuallyDownloadingIcon.Dispatcher.Invoke(new Action(() => SetIcon(path)));
+                return;
+            }
+
+            SetIcon(new BitmapImage(new Uri(path)));
+        }
+
+        private void SetIcon(BitmapImage image)
+        {
+            if (!actuallyDownloadingIcon.Dispatcher.CheckAccess())
+            {
+                actuallyDownloadingIcon.Dispatcher.Invoke(new Action(() => SetIcon(image)));
+                return;
+            }
+
+            actuallyDownloadingIcon.Source = image;
+        }
+
+        private void IconDownloaded(DownloadEngine.DownloadStatus status, Int64 gameID, DownloadManager.DownloadTypes type)
+        {
+            if(status == DownloadEngine.DownloadStatus.success)
+            {
+                SetIcon(AppDomain.CurrentDomain.BaseDirectory + Library.iconsPath + gameID.ToString() + "_1.png");
+            }
         }
 
         private void SetEmptyMenu()
@@ -135,6 +189,8 @@ namespace MStore
                     actuallyDownloadingName.Dispatcher.BeginInvoke(new Action(SetEmptyMenu));
                     measuredSizes = new Library.Game.Size[10];
                     measuredSizesIndex = 0;
+
+                    lastGameID = -1;
                     return;
                 }
 
@@ -161,8 +217,9 @@ namespace MStore
             }
 
 
+
             //SetValues();
-            if(updatePercentageThread != null)
+            if (updatePercentageThread != null)
             {
                 if(updatePercentageThread.IsAlive)
                 {

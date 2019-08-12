@@ -6,10 +6,10 @@
         xmlns:local="clr-namespace:MStore"
         mc:Ignorable="d"
         Title="ConfirmationWindow" Height="140.804" Width="268.381">
-	<Grid>
-		<TextBlock HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="Are You sure?" VerticalAlignment="Top" Width="223" TextAlignment="Center" FontSize="22" FontWeight="Bold"/>
-		<Button x:Name="YesButton" Content="Yes" HorizontalAlignment="Left" Margin="164,66,0,0" VerticalAlignment="Top" Width="75" Click="YesButton_Click"/>
-		<Button x:Name="NoButton" Content="No" HorizontalAlignment="Left" Margin="10,66,0,0" VerticalAlignment="Top" Width="75" Click="NoButton_Click"/>
+	<Grid Background="{StaticResource BackgroundBrush}">
+		<TextBlock HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="Are You sure?" VerticalAlignment="Top" Width="223" TextAlignment="Center" FontSize="22" FontWeight="Bold" Foreground="{DynamicResource TextColor}"/>
+		<Button x:Name="YesButton" Content="Yes" HorizontalAlignment="Left" Margin="164,66,0,0" VerticalAlignment="Top" Width="75" Click="YesButton_Click" Background="#FF34E600" BorderBrush="#00707070"/>
+		<Button x:Name="NoButton" Content="No" HorizontalAlignment="Left" Margin="10,66,0,0" VerticalAlignment="Top" Width="75" Click="NoButton_Click" BorderBrush="#00707070" Background="Red"/>
 
 	</Grid>
 </Window>

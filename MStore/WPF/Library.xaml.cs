@@ -41,11 +41,17 @@ namespace MStore
 
         private static Game actualGameSelected;
 
-        public string appPath = "./installed/";
+        public static string appPath = "./installed/";
+        public static string iconsPath = "./icons/";
 
-        public User userInfo = new User();
+        public static User userInfo = new User();
 
         private int gamesSPGamesStartIndex = -1;
+
+        private ImageSource originalIcon;
+
+
+        public static DownloadManager iconsDownloader;
 
         public class User
         {
@@ -256,11 +262,27 @@ namespace MStore
             return -1;
         }
 
+        private void DisplayNoGamesInfo()
+        {
+            RunButton.Visibility = Visibility.Hidden;
+
+            UninstallButton.Visibility = Visibility.Hidden;
+
+            GameIcon.Visibility = Visibility.Hidden;
+        }
+
         private void DisplayGameInfo(Game game)
         {
             //Debug.LogWarning("DisplayGameInfo(Game game) - Not implemented");
 
+            LoadIcon(game.id);
+
             GameTitle.Text = game.name;
+
+            RunButton.Visibility = Visibility.Visible;
+
+            //Disable if icon is not downloaded
+            GameIcon.Visibility = Visibility.Visible;
 
             if(game.installed)
             {
@@ -300,7 +322,7 @@ namespace MStore
 
 
         SolidColorBrush notInstalledColor = Brushes.DarkGray;
-        SolidColorBrush installedColor = Brushes.Black;
+        SolidColorBrush installedColor = Brushes.White;
         private void AddGameToTheList(Game game)
         {
             if(GameListTextTemplate.Text == "")
@@ -344,8 +366,19 @@ namespace MStore
         {
             InitializeComponent();
 
+            if (client == null)
+            {
+                if (Directory.Exists(iconsPath))
+                {
+                    Directory.Delete(iconsPath, true);
+                }
+                Directory.CreateDirectory(iconsPath);
+            }
 
             client = App.storeClient;
+            iconsDownloader = new DownloadManager(client.ipAddress, client.downloadIconsPort);
+
+            originalIcon = GameIcon.Source;
 
 
             gameTextBlockPrefab = XamlWriter.Save(GameListTextTemplate);
@@ -356,8 +389,6 @@ namespace MStore
             //newButton.Text = "Fortnite";
             //newButton.MouseLeftButtonDown += OnGameTextClick;
 
-            //AddGameToTheList("Fortnite");
-            //AddGameToTheList("Minecraft");
 
             GetUserInfo();
 
@@ -370,13 +401,20 @@ namespace MStore
 
             GetGamesList();
 
+
             //client.DownloadGame(0, userInfo.token);
 
         }
 
-        private void GetUserInfo()
+        private void GetUserInfo(bool force = false)
         {
             
+            if(userInfo.id != -1 && !force)
+            {
+                return;
+            }
+
+            Debug.Log("Getting user info...");
 
             string data = client.RequestUserInfo();
 
@@ -544,7 +582,7 @@ namespace MStore
 
                 Debug.Log("Library:");
                 Debug.Log("\n\n");
-                Debug.Log(library);
+                Debug.Log("\"" + library + "\"");
                 Debug.Log("\n\n");
 
                 int gameListSize = 0;
@@ -606,6 +644,90 @@ namespace MStore
            
         }
 
+        private void SetNewIcon(string path)
+        {
+            if (!GameIcon.Dispatcher.CheckAccess())
+            {
+                GameIcon.Dispatcher.Invoke(new Action(() => SetNewIcon(path)));
+                return;
+            }
+            //GameIcon.Source = new BitmapImage(new Uri(path));
+            SetNewIcon(new BitmapImage(new Uri(path)));
+        }
+
+        private void SetNewIcon(BitmapImage image)
+        {
+            if(!GameIcon.Dispatcher.CheckAccess())
+            {
+                GameIcon.Dispatcher.Invoke(new Action(() => SetNewIcon(image)));
+                return;
+            }
+            GameIcon.Source = image;
+        }
+
+        public void LoadIcon(Int64 gameID)
+        {
+            Debug.Log("Loading " + gameID.ToString() + " icon");
+
+            string _path = AppDomain.CurrentDomain.BaseDirectory + iconsPath + gameID.ToString() + "_0.png";
+
+            if(!File.Exists(_path))
+            {
+                iconsDownloader.DownloadIcon(gameID, userInfo.token, _path, IconDownloaded);
+                //GameIcon.Source = null;//originalIcon;
+                BitmapImage image = null;
+                SetNewIcon(image);
+                return;
+            }
+
+            SetNewIcon(_path);
+            
+        }
+
+        public void IconDownloaded(DownloadEngine.DownloadStatus status, Int64 gameID, DownloadManager.DownloadTypes type)
+        {
+            if (status == DownloadEngine.DownloadStatus.success)
+            {
+
+                if (actualGameSelected.id == gameID)
+                {
+                    LoadIcon(gameID);
+                }
+                return;
+            }
+
+            if(status == DownloadEngine.DownloadStatus.appWithoutIcon)
+            {
+                if(!GameIcon.Dispatcher.CheckAccess())
+                {
+                    GameIcon.Dispatcher.Invoke(new Action(() => IconDownloaded(status, gameID, type)));
+                    return;
+                }
+
+                GameIcon.Source = originalIcon;
+            }
+        }
+
+        /*public void DownloadGamesIcons()
+        {
+            if(!Directory.Exists(iconsPath))
+            {
+                Directory.CreateDirectory(iconsPath);
+            }
+
+            for(int i = 0;i<games.Count;i++)
+            {
+                string _iconPath = iconsPath + games[i].id.ToString() + ".png";
+
+                if (File.Exists(_iconPath))
+                {
+                    continue;
+                }
+
+                iconsDownloader.DownloadIcon(games[i].id, userInfo.token, _iconPath, IconDownloaded);
+            }
+        }*/
+
         public void ClearDisplayedGames()
         {
 
@@ -655,6 +777,10 @@ namespace MStore
                 {
                     DisplayGameInfo(actualGameSelected);
                 }
+            }
+            else
+            {
+                DisplayNoGamesInfo();
             }
         }
 
@@ -722,7 +848,7 @@ namespace MStore
             games = newGamesList;
         }
 
-        public void GameInstalled(DownloadEngine.DownloadStatus status, long id)
+        public void GameInstalled(DownloadEngine.DownloadStatus status, long id, DownloadManager.DownloadTypes type)
         {
             Debug.LogWarning("Game installation status: " + status);
 
@@ -764,6 +890,7 @@ namespace MStore
             DownloadEngine engine;
             if(choose == InstallAppPopup.UserChoose.install)
             {
+                Debug.Log("User token: \"" + userInfo.token + "\"");
                 engine = client.DownloadGame(game.id, userInfo.token, GameInstalled);
 
                 /*Thread.Sleep(50);

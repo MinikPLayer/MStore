@@ -6,9 +6,11 @@
         xmlns:local="clr-namespace:MStore"
         mc:Ignorable="d"
         Title="MainWindow" Width="1280" Height="720" MinWidth="640" MinHeight="480">
-	<Grid>
-		<TextBlock HorizontalAlignment="Left" Margin="10,10,152,10" TextWrapping="Wrap" VerticalAlignment="Stretch" Width="422" x:Name="LogText"><InlineUIContainer>
+	<Grid Background="{StaticResource BackgroundBrush}">
+		<TextBlock HorizontalAlignment="Left" Margin="10,10,152,10" TextWrapping="Wrap" VerticalAlignment="Stretch" Width="422" x:Name="LogText">
+            <InlineUIContainer>
 				<ContentControl  Name="conentControl"/>
-			</InlineUIContainer></TextBlock>
+			</InlineUIContainer>
+        </TextBlock>
 	</Grid>
 </Window>

@@ -6,29 +6,29 @@
         xmlns:local="clr-namespace:MStore.Controls"
         mc:Ignorable="d"
         Title="DownloadMenu" Height="720" Width="1280">
-	<Grid>
-		<local:NavBar HorizontalAlignment="Left" Margin="10,8,0,0" VerticalAlignment="Top" Width="1248" RenderTransformOrigin="0.5,0.5">
-			<local:NavBar.RenderTransform>
-				<TransformGroup>
-					<ScaleTransform/>
-					<SkewTransform AngleY="-0.357"/>
-					<RotateTransform/>
-					<TranslateTransform Y="-1.494"/>
-				</TransformGroup>
-			</local:NavBar.RenderTransform>
-		</local:NavBar>
-		<TextBlock HorizontalAlignment="Left" Margin="10,118,0,0" TextWrapping="Wrap" Text="Actually downloading game:" VerticalAlignment="Top" FontSize="48" FontWeight="Bold"/>
-		<TextBlock HorizontalAlignment="Left" Margin="10,386,0,0" TextWrapping="Wrap" Text="Download queue:" VerticalAlignment="Top" FontSize="24" FontWeight="Bold"/>
-		<ScrollViewer HorizontalAlignment="Left" Height="256" Margin="10,423,0,0" VerticalAlignment="Top" Width="1252">
-			<StackPanel x:Name="downloadQueueView" HorizontalAlignment="Left" Height="256" Margin="0,0,0,0" VerticalAlignment="Top" Width="1242">
-				<TextBlock x:Name="GameListTextTemplate" Visibility="Visible" HorizontalAlignment="Left" Margin="0,0,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" FontSize="18" Background="#00A6A6A6" Width="1232"/>
-			</StackPanel>
-		</ScrollViewer>
-		<Image x:Name="actuallyDownloadingIcon" HorizontalAlignment="Left" Height="194" Margin="10,187,0,0" VerticalAlignment="Top" Width="198"/>
-		<TextBlock x:Name="actuallyDownloadingName" HorizontalAlignment="Left" Margin="231,201,0,0" TextWrapping="Wrap" Text="None" VerticalAlignment="Top" FontSize="36" Width="848"/>
-		<ProgressBar Minimum="0" Maximum="100" x:Name="acutallyDownloadingProgressBar" HorizontalAlignment="Left" Height="33" Margin="231,286,0,0" VerticalAlignment="Top" Width="923"/>
-		<TextBlock x:Name="actuallyDownloadingPercentage" HorizontalAlignment="Left" Margin="1176,286,0,0" TextWrapping="Wrap" Text="100%" VerticalAlignment="Top" FontSize="24"/>
-		<TextBlock HorizontalAlignment="Left" Margin="231,349,0,0" TextWrapping="Wrap" Text="Speed:" VerticalAlignment="Top" FontSize="24"/>
-		<TextBlock x:Name="actuallyDownloadingSpeed" HorizontalAlignment="Left" Margin="322,349,0,0" TextWrapping="Wrap" Text="0B/s" VerticalAlignment="Top" FontSize="24" FontWeight="Bold"/>
-	</Grid>
+    <Grid Background="{StaticResource BackgroundBrush}">
+        <local:NavBar HorizontalAlignment="Left" Margin="10,8,0,0" VerticalAlignment="Top" Width="1248" RenderTransformOrigin="0.5,0.5">
+            <local:NavBar.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform AngleY="-0.357"/>
+                    <RotateTransform/>
+                    <TranslateTransform Y="-1.494"/>
+                </TransformGroup>
+            </local:NavBar.RenderTransform>
+        </local:NavBar>
+        <TextBlock HorizontalAlignment="Left" Margin="10,118,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="48" FontWeight="Bold" Foreground="{DynamicResource TextColor}"><Run Text="Currently "/><Run Text="downloading game:"/></TextBlock>
+        <TextBlock HorizontalAlignment="Left" Margin="10,452,0,0" TextWrapping="Wrap" Text="Download queue:" VerticalAlignment="Top" FontSize="24" FontWeight="Bold" Foreground="{DynamicResource TextColor}"/>
+        <ScrollViewer HorizontalAlignment="Left" Height="190" Margin="10,489,0,0" VerticalAlignment="Top" Width="1252">
+            <StackPanel x:Name="downloadQueueView" HorizontalAlignment="Left" Height="256" Margin="0,0,0,0" VerticalAlignment="Top" Width="1242">
+                <TextBlock x:Name="GameListTextTemplate" Visibility="Visible" HorizontalAlignment="Left" Margin="0,0,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" FontSize="18" Background="#00A6A6A6" Width="1232" Foreground="{DynamicResource TextColor}"/>
+            </StackPanel>
+        </ScrollViewer>
+        <Image x:Name="actuallyDownloadingIcon" HorizontalAlignment="Left" Height="256" Margin="10,187,0,0" VerticalAlignment="Top" Width="256"/>
+        <TextBlock x:Name="actuallyDownloadingName" HorizontalAlignment="Left" Margin="289,204,0,0" TextWrapping="Wrap" Text="None" VerticalAlignment="Top" FontSize="36" Width="848" Foreground="{DynamicResource TextColor}"/>
+        <ProgressBar Minimum="0" Maximum="100" x:Name="acutallyDownloadingProgressBar" HorizontalAlignment="Left" Height="33" Margin="289,286,0,0" VerticalAlignment="Top" Width="865"/>
+        <TextBlock x:Name="actuallyDownloadingPercentage" HorizontalAlignment="Left" Margin="1176,286,0,0" TextWrapping="Wrap" Text="100%" VerticalAlignment="Top" FontSize="24" Foreground="{DynamicResource TextColor}"/>
+        <TextBlock HorizontalAlignment="Left" Margin="289,348,0,0" TextWrapping="Wrap" Text="Speed:" VerticalAlignment="Top" FontSize="24" Foreground="{DynamicResource TextColor}"/>
+        <TextBlock x:Name="actuallyDownloadingSpeed" HorizontalAlignment="Left" Margin="386,348,0,0" TextWrapping="Wrap" Text="0B/s" VerticalAlignment="Top" FontSize="24" FontWeight="Bold" Foreground="{DynamicResource TextColor}"/>
+    </Grid>
 </Window>

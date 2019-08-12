@@ -12,6 +12,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
+using System.IO;
+
 namespace MStore.Login
 {
     /// <summary>
@@ -23,9 +25,11 @@ namespace MStore.Login
 
         public const bool debug = false;
 
+        public static string userInfoFileName = StoreClient.GetPath("user.dat");
+
         private void DebugAutoLog()
         {
-            LoginTextBot.Text = "abcd";
+            LoginTextBox.Text = "abcd";
             PasswordTextBox.Password = "abcd";
 
             RegisterButton_Click(this, new RoutedEventArgs());
@@ -43,7 +47,92 @@ namespace MStore.Login
                 DebugAutoLog();
             }
 
+
+            LoadUserInfoFromFile();
+
+            if (loggedIn) return;
+
+
+            this.ShowDialog();
             
+        }
+
+        bool autoLogin = false;
+        private void ParseConfigLine(string line)
+        {
+            if(line.StartsWith("login="))
+            {
+                line = line.Remove(0, "login=".Length);
+
+                LoginTextBox.Text = line;
+
+                return;
+            }
+            else if(line.StartsWith("password="))
+            {
+                line = line.Remove(0, "password=".Length);
+
+                PasswordTextBox.Password = line;
+
+                return;
+            }
+            else if(line.StartsWith("autologin="))
+            {
+                line = line.Remove(0, "autologin=".Length);
+
+                if(line == "true")
+                {
+                    autoLogin = true;
+                }
+                else if(line == "false")
+                {
+                    autoLogin = false;
+                }
+            }
+        }
+
+        private void LoadUserInfoFromFile()
+        {
+            if(!File.Exists(userInfoFileName))
+            {
+                return;
+            }
+            string[] lines = File.ReadAllLines(userInfoFileName);
+            for(int i = 0;i<lines.Length;i++)
+            {
+                ParseConfigLine(lines[i]);
+            }
+
+            if(autoLogin)
+            {
+                LoginButton_Click(this, new RoutedEventArgs());
+            }
+        }
+
+        private void SaveUserInfoToFile(string login = "", string password = "", bool autoLogin = false)
+        {
+            string dataToWrite = "";
+            if(login.Length != 0)
+            {
+                dataToWrite += "login=" + login + '\n';
+            }
+
+            if(password.Length != 0)
+            {
+                dataToWrite += "password=" + password + '\n';
+            }
+
+            if(autoLogin)
+            {
+                dataToWrite += "autologin=true";
+            }
+            else
+            {
+                dataToWrite += "autologin=false";
+            }
+
+
+            File.WriteAllText(userInfoFileName, dataToWrite);
         }
 
         private void LoginButton_Click(object sender, RoutedEventArgs e)
@@ -52,10 +141,10 @@ namespace MStore.Login
             
             //Placeholder
 
-            Console.WriteLine("Login: " + LoginTextBot.Text);
+            Console.WriteLine("Login: " + LoginTextBox.Text);
             Console.WriteLine("Password: " + PasswordTextBox.Password);
 
-            if (LoginTextBot.Text.Length == 0)
+            if (LoginTextBox.Text.Length == 0)
             {
                 MessageBox.Show("Login cannot be empty", "Login", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
@@ -66,13 +155,18 @@ namespace MStore.Login
                 return;
             }
 
-            string result = App.storeClient.Login(LoginTextBot.Text, PasswordTextBox.Password);
+            string result = App.storeClient.Login(LoginTextBox.Text, PasswordTextBox.Password);
 
             Debug.Log("Login result: " + result);
 
             if(result == "LS:OK")
             {
                 loggedIn = true;
+
+                if(RememberMeSwitch.IsChecked == true)
+                {
+                    SaveUserInfoToFile(LoginTextBox.Text, PasswordTextBox.Password, true);
+                }
 
                 MainWindow mainWindow = (MainWindow)Application.Current.MainWindow;
                 mainWindow.OpenLibrary();
@@ -113,10 +207,10 @@ namespace MStore.Login
 
         private void RegisterButton_Click(object sender, RoutedEventArgs e)
         {
-            Console.WriteLine("Login: " + LoginTextBot.Text);
+            Console.WriteLine("Login: " + LoginTextBox.Text);
             Console.WriteLine("Password: " + PasswordTextBox.Password);
 
-            if (LoginTextBot.Text.Length == 0)
+            if (LoginTextBox.Text.Length == 0)
             {
                 MessageBox.Show("Login cannot be empty", "Login", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
@@ -127,7 +221,7 @@ namespace MStore.Login
                 return;
             }
 
-            string result = App.storeClient.Register(LoginTextBot.Text, PasswordTextBox.Password);
+            string result = App.storeClient.Register(LoginTextBox.Text, PasswordTextBox.Password);
 
             Debug.Log("Login result: " + result);
 
@@ -136,7 +230,7 @@ namespace MStore.Login
                 if (!debug)
                 {
                     //Debugging
-                    MessageBox.Show("User " + LoginTextBot.Text + " successfully registered", "Register complete", MessageBoxButton.OK, MessageBoxImage.Information);
+                    MessageBox.Show("User " + LoginTextBox.Text + " successfully registered", "Register complete", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
             }
             else
@@ -146,7 +240,7 @@ namespace MStore.Login
                 string message = result;
                 if (message == "RS:AR")
                 {
-                    message = "User " + LoginTextBot.Text + " is already registered";
+                    message = "User " + LoginTextBox.Text + " is already registered";
                 }
 
                 if (!debug)

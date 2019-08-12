@@ -12,9 +12,9 @@
 			<ColumnDefinition Width="715*"/>
 			<ColumnDefinition Width="19*"/>
 		</Grid.ColumnDefinitions>
-		<Button Content="Library" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="129" Height="82" Name="LibraryButton" FontSize="36" Click="LibraryButton_Click" Grid.ColumnSpan="2"/>
-		<Button Content="Menu" HorizontalAlignment="Left" Margin="81,10,0,0" VerticalAlignment="Top" Width="129" Height="82" x:Name="MenuButton" FontSize="36" Click="MenuButton_Click" Grid.Column="1"  />
-		<Button Name="DownloadMenuButton" HorizontalAlignment="Left" Margin="1014,10,0,0" VerticalAlignment="Top" Width="129" Height="82" FontSize="36" Grid.Column="1" Click="DownloadMenuButton_Click" >
+		<Button Content="Library" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="129" Height="82" Name="LibraryButton" FontSize="36" Click="LibraryButton_Click" Grid.ColumnSpan="2" Background="#00DDDDDD" Foreground="White" BorderBrush="#00707070"/>
+		<Button Content="Menu" HorizontalAlignment="Left" Margin="81,10,0,0" VerticalAlignment="Top" Width="129" Height="82" x:Name="MenuButton" FontSize="36" Click="MenuButton_Click" Grid.Column="1" Background="#00DDDDDD" Foreground="White" BorderBrush="#00707070"  />
+		<Button Name="DownloadMenuButton" HorizontalAlignment="Left" Margin="1014,10,0,0" VerticalAlignment="Top" Width="129" Height="82" FontSize="36" Grid.Column="1" Click="DownloadMenuButton_Click" Background="#00DDDDDD" BorderBrush="#00707070" >
 			<StackPanel>
 				<Image Source="pack://application:,,,/Images/DownloadIcon.png" Height="76"/>
 			</StackPanel>

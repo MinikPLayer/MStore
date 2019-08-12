@@ -6,14 +6,14 @@
         xmlns:local="clr-namespace:MStore"
         mc:Ignorable="d"
         Title="InstallAppPopup" Height="450" Width="364.834">
-	<Grid Margin="0,0,-3,0">
-		<Button x:Name="CancelButton" Content="Cancel" HorizontalAlignment="Left" Margin="10,362,0,0" VerticalAlignment="Top" Width="105" Height="28" Click="CancelButton_Click"/>
-		<Button x:Name="InstallButton" Content="Install" HorizontalAlignment="Left" Margin="235,362,0,0" VerticalAlignment="Top" Width="105" Height="28" Click="InstallButton_Click"/>
-		<TextBlock x:Name="GameName" HorizontalAlignment="Center" Margin="10,10,10,0" TextWrapping="Wrap" Text="GameName" VerticalAlignment="Top" Width="330" FontWeight="Bold" TextAlignment="Center" Height="74" FontSize="24"/>
-		<TextBlock HorizontalAlignment="Left" Margin="10,84,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="16"><Run Text="Size to downloa"/><Run Text="d"/><Run Text=":"/></TextBlock>
-		<TextBlock x:Name="downloadSizeText" HorizontalAlignment="Left" Margin="235,84,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="16" Text="UNKNOWN" TextAlignment="Right" Width="105"/>
-		<TextBlock HorizontalAlignment="Left" Margin="10,110,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="16" Text="Size on disk:"/>
-		<TextBlock x:Name="diskSizeText" HorizontalAlignment="Left" Margin="235,110,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="16" Text="UNKNOWN" TextAlignment="Right" Width="105"/>
+    <Grid Margin="0,0,-3,0" Background="{StaticResource BackgroundBrush}">
+        <Button x:Name="CancelButton" Content="Cancel" HorizontalAlignment="Left" Margin="10,362,0,0" VerticalAlignment="Top" Width="105" Height="28" Click="CancelButton_Click" Background="Red" BorderBrush="#00707070" Foreground="Black"/>
+        <Button x:Name="InstallButton" Content="Install" HorizontalAlignment="Left" Margin="235,362,0,0" VerticalAlignment="Top" Width="105" Height="28" Click="InstallButton_Click" Background="#FF0AE000" BorderBrush="#00707070" Foreground="Black"/>
+        <TextBlock x:Name="GameName" HorizontalAlignment="Center" Margin="10,10,10,0" TextWrapping="Wrap" Text="GameName" VerticalAlignment="Top" Width="330" FontWeight="Bold" TextAlignment="Center" Height="74" FontSize="24" Foreground="{DynamicResource TextColor}"/>
+        <TextBlock HorizontalAlignment="Left" Margin="10,84,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="16" Foreground="{DynamicResource TextColor}"><Run Text="Size to downloa"/><Run Text="d"/><Run Text=":"/></TextBlock>
+        <TextBlock x:Name="downloadSizeText" HorizontalAlignment="Left" Margin="235,84,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="16" Text="UNKNOWN" TextAlignment="Right" Width="105" Foreground="{DynamicResource TextColor}"/>
+        <TextBlock HorizontalAlignment="Left" Margin="10,110,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="16" Text="Size on disk:" Foreground="{DynamicResource TextColor}"/>
+        <TextBlock x:Name="diskSizeText" HorizontalAlignment="Left" Margin="235,110,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="16" Text="UNKNOWN" TextAlignment="Right" Width="105" Foreground="{DynamicResource TextColor}"/>
 
-	</Grid>
+    </Grid>
 </Window>

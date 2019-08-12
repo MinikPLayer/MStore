@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:MStore.Controls"
         mc:Ignorable="d"
         Title="DownloadMenu" Height="720" Width="1280">
-	<Grid>
+	<Grid Background="{StaticResource BackgroundBrush}">
 		<local:NavBar HorizontalAlignment="Left" Margin="10,8,0,0" VerticalAlignment="Top" Width="1248" RenderTransformOrigin="0.5,0.5">
 			<local:NavBar.RenderTransform>
 				<TransformGroup>
@@ -17,6 +17,6 @@
 				</TransformGroup>
 			</local:NavBar.RenderTransform>
 		</local:NavBar>
-		<TextBlock HorizontalAlignment="Left" Margin="237,320,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="72"><Run Text="No games "/><Run Text="do"/><Run Text="wnloading!"/></TextBlock>
+		<TextBlock Foreground="{StaticResource TextColor}" HorizontalAlignment="Left" Margin="237,320,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="72"><Run Text="No games "/><Run Text="do"/><Run Text="wnloading!"/></TextBlock>
 	</Grid>
 </Window>

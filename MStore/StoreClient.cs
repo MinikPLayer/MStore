@@ -79,6 +79,40 @@ port = 15332";
                     Debug.LogError("Invalid port format, cannot parse " + line + " to port ( int )");
                 }
             }
+            else if(line.ToLower().StartsWith("downloadport="))
+            {
+                line = line.Remove(0, "downloadport=".Length);
+
+                int _downloadPort = 0;
+
+                if(int.TryParse(line, out _downloadPort))
+                {
+                    downloadEnginePort = _downloadPort;
+
+                    Debug.Log("New download engine port: " + downloadEnginePort);
+                }
+                else
+                {
+                    Debug.LogError("Invalid port format, cannot parse " + line + " to download port ( int )");
+                }
+            }
+            else if(line.ToLower().StartsWith("iconsdownloadport=") || line.ToLower().StartsWith("downloadiconsport="))
+            {
+                line = line.Remove(0, "iconsdownloadport=".Length);
+
+                int _downloadPort = 0;
+
+                if (int.TryParse(line, out _downloadPort))
+                {
+                    downloadIconsPort = _downloadPort;
+
+                    Debug.Log("New icons download port: " + downloadIconsPort);
+                }
+                else
+                {
+                    Debug.LogError("Invalid port format, cannot parse " + line + " to icons download port ( int )");
+                }
+            }
         }
 
         public static string GetPath(string relativePath)
@@ -119,9 +153,10 @@ port = 15332";
             }
         }
 
-        string ipAddress = "127.0.0.1";
-        int port = 15332;
-        int downloadEnginePort = 5592;
+        public string ipAddress = "127.0.0.1";
+        public int port = 15332;
+        public int downloadEnginePort = 5592;
+        public int downloadIconsPort = 5593;
 
         public StoreClient()
         {
@@ -281,7 +316,7 @@ port = 15332";
             return returnClient;
         }
 
-        public DownloadEngine DownloadGame(Int64 id, string token, Action<DownloadEngine.DownloadStatus, long> downloadCompleteFunction = null)
+        public DownloadEngine DownloadGame(Int64 id, string token, Action<DownloadEngine.DownloadStatus, long, DownloadManager.DownloadTypes> downloadCompleteFunction = null)
         {
             //DownloadEngine downloadEngine = new DownloadEngine(createNewClient(ipAddress, downloadEnginePort), token);
             /*if(downloadEngine == null)
