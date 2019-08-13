@@ -30,9 +30,16 @@
         <Image x:Name="GameIcon" Source="pack://application:,,,/Images/Default/Icon.png" HorizontalAlignment="Left" Height="32" Margin="316,177,0,0" VerticalAlignment="Top" Width="32"/>
         <Button x:Name="BuyButton" Content="Buy" HorizontalAlignment="Left" Margin="366,230,0,0" VerticalAlignment="Top" Width="95" Height="32" Background="#FFFFC500" Click="BuyButton_Click"/>
         <TextBlock x:Name="PriceText" HorizontalAlignment="Left" Margin="475,230,0,0" TextWrapping="Wrap" Text="Unknown price" VerticalAlignment="Top" Foreground="{DynamicResource TextColor}" FontSize="22" Width="164"/>
-        <TextBlock HorizontalAlignment="Left" Margin="316,127,0,0" TextWrapping="Wrap" Text="Coins: " VerticalAlignment="Top" Foreground="{DynamicResource TextColor}" FontSize="18"/>
-        <TextBlock x:Name="CoinsNumberText" HorizontalAlignment="Left" Margin="374,127,0,0" TextWrapping="Wrap" Text="2955231" VerticalAlignment="Top" FontSize="18" Foreground="#FFFFF300" Width="258" FontWeight="Bold"/>
+        <TextBlock HorizontalAlignment="Left" Margin="316,127,0,0" TextWrapping="Wrap" Text="Wallet:" VerticalAlignment="Top" Foreground="{DynamicResource TextColor}" FontSize="18"/>
+        <TextBlock x:Name="CoinsNumberText" HorizontalAlignment="Left" Margin="381,127,0,0" TextWrapping="Wrap" Text="2955231" VerticalAlignment="Top" FontSize="18" Foreground="#FFFFF300" Width="258" FontWeight="Bold"/>
         <Button x:Name="UserVoucherButton" Content="Use Voucher" HorizontalAlignment="Left" Margin="1097,630,0,0" VerticalAlignment="Top" Width="165" Height="49" FontSize="20" Background="#26DDDDDD" Foreground="{DynamicResource TextColor}" Click="UserVoucherButton_Click"/>
+        <TextBox KeyDown="SearchBar_KeyDown" MaxLength="5" PreviewTextInput="MinimumPriceFilterBox_PreviewTextInput" x:Name="MinimumPriceFilterBox" HorizontalAlignment="Left" Height="23" Margin="361,640,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Background="#48FFFFFF" BorderBrush="{x:Null}" Foreground="{DynamicResource TextColor}" TextChanged="MinimumPriceFilterBox_TextChanged"/>
+        <TextBlock HorizontalAlignment="Left" Margin="269,634,0,0" TextWrapping="Wrap" Text="Filters:" VerticalAlignment="Top" Foreground="{DynamicResource TextColor}" FontSize="22"/>
+        <TextBlock HorizontalAlignment="Left" Margin="361,611,0,0" TextWrapping="Wrap" Text="Min Price:" VerticalAlignment="Top" Foreground="{DynamicResource TextColor}" FontSize="18"/>
+        <TextBox KeyDown="SearchBar_KeyDown" MaxLength="5" PreviewTextInput="MinimumPriceFilterBox_PreviewTextInput" x:Name="MaximumPriceFilterBox" HorizontalAlignment="Left" Height="23" Margin="495,640,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Background="#48FFFFFF" BorderBrush="{x:Null}" Foreground="{DynamicResource TextColor}" TextChanged="MaximumPriceFilterBox_TextChanged"/>
+        <TextBlock HorizontalAlignment="Left" Margin="495,611,0,0" TextWrapping="Wrap" Text="Max Price:" VerticalAlignment="Top" Foreground="{DynamicResource TextColor}" FontSize="18"/>
+        <TextBox KeyDown="SearchBar_KeyDown" TextWrapping="NoWrap" x:Name="SearchBar" HorizontalAlignment="Left" Height="22" Margin="0,119,0,0" VerticalAlignment="Top" Width="199" TextChanged="SearchBar_TextChanged" Background="#3F000000" Foreground="{DynamicResource TextColor}"/>
+        <Button Content="Search" HorizontalAlignment="Left" Margin="199,119,0,0" VerticalAlignment="Top" Width="53" Height="22" Click="FilterButton_Click" Background="#3F000000" Foreground="{DynamicResource TextColor}"/>
 
 
 

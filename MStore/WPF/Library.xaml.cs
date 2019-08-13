@@ -58,9 +58,9 @@ namespace MStore
             public string userName = "";
             public string token = "";
             public Int64 id = -1;
-            public Int64 coins = -1;
+            public string coins = "0";
 
-            public User(string _userName, string _token, Int64 _id, Int64 _coins)
+            public User(string _userName, string _token, Int64 _id, string _coins)
             {
                 userName = _userName;
                 token = _token;
@@ -482,17 +482,26 @@ namespace MStore
             //Coins
             data = GetStringToSpecialCharAndDelete(data, '\n', out info);
 
-
-            Int64 coins;
-            if (Int64.TryParse(info, out coins))
+            /*if (info == "Free")
             {
-                userInfo.coins = coins;
+                userInfo.coins = 0;
             }
             else
             {
-                Debug.LogError("Cannot parse \"" + info + "\" to coins ( Int64 )");
-                return;
-            }
+
+                Int64 coins;
+                if (Int64.TryParse(info, out coins))
+                {
+                    userInfo.coins = coins;
+                }
+                else
+                {
+                    Debug.LogError("Cannot parse \"" + info + "\" to coins ( Int64 )");
+                    return;
+                }
+            }*/
+
+            userInfo.coins = info;
 
         }
 

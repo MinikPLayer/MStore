@@ -372,9 +372,25 @@ port = 15332";
             return socket.WaitForReceive();
         }
 
-        public string RequestStoreGamesList()
+        public string RequestStoreGamesList(int minimumPrice = -1, int maximumPrice = -1, string nameFilter = "")
         {
-            SendCommand(Commands.storeGamesList);
+            string parameters = "";
+            if(minimumPrice > 0)
+            {
+                parameters += "m" + minimumPrice.ToString() + "\n";
+            }
+            if(maximumPrice > 0)
+            {
+                parameters += "M" + maximumPrice.ToString() + "\n";
+            }
+            if(nameFilter.Length > 0)
+            {
+                parameters += "S" + nameFilter + "\n";
+            }
+
+
+
+            SendCommand(Commands.storeGamesList, parameters);
 
             return socket.WaitForReceive();
         }

@@ -24,6 +24,8 @@ using System.Diagnostics;
 
 using System.Threading;
 
+using System.Text.RegularExpressions;
+
 namespace MStore
 {
     /// <summary>
@@ -45,6 +47,10 @@ namespace MStore
 
         private ImageSource originalIcon;
 
+        public static int minPriceFilter = -1;
+        public static int maxPriceFilter = -1;
+
+        public static string nameFilter = "";
 
         public class Game
         {
@@ -232,6 +238,8 @@ namespace MStore
             GameIcon.Visibility = Visibility.Hidden;
 
             PriceText.Visibility = Visibility.Hidden;
+
+            GameTitle.Text = "No apps found";
         }
 
         private void DisplayGameInfo(Game game)
@@ -332,6 +340,15 @@ namespace MStore
             CoinsNumberText.Text = Library.userInfo.coins.ToString();
 
 
+            if(minPriceFilter >= 0)
+            {
+                MinimumPriceFilterBox.Text = minPriceFilter.ToString();
+            }
+            if(maxPriceFilter >= 0)
+            {
+                MaximumPriceFilterBox.Text = maxPriceFilter.ToString();
+            }
+
             //client.DownloadGame(0, userInfo.token);
 
         }
@@ -405,7 +422,7 @@ namespace MStore
             if (games.Count == 0 || forceRefresh)
             {
 
-                string gamesList = client.RequestStoreGamesList();
+                string gamesList = client.RequestStoreGamesList(minPriceFilter, maxPriceFilter, nameFilter);
                 List<string> _games = new List<string>();
 
                 games = new List<Game>();
@@ -777,6 +794,61 @@ namespace MStore
                         MessageBox.Show("Unknown error", "ERROR", MessageBoxButton.OK, MessageBoxImage.Error);
                         break;
                 }
+            }
+        }
+
+        private void MinimumPriceFilterBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            Regex regex = new Regex("[^0-9]+");
+            e.Handled = regex.IsMatch(e.Text);
+        }
+
+        private void FilterButton_Click(object sender, RoutedEventArgs e)
+        {
+            GetGamesList(true);
+
+
+
+            actualGameSelected = null;
+
+            RefreshGamesDisplay();
+        }
+
+        private void MinimumPriceFilterBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (MinimumPriceFilterBox.Text.Length == 0)
+            {
+                minPriceFilter = -1;
+            }
+            else
+            {
+                minPriceFilter = int.Parse(MinimumPriceFilterBox.Text);
+
+            }
+        }
+
+        private void MaximumPriceFilterBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if(MaximumPriceFilterBox.Text.Length == 0)
+            {
+                maxPriceFilter = -1;
+            }
+            else
+            {
+                maxPriceFilter = int.Parse(MaximumPriceFilterBox.Text);
+            }
+        }
+
+        private void SearchBar_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            nameFilter = SearchBar.Text;
+        }
+
+        private void SearchBar_KeyDown(object sender, KeyEventArgs e)
+        {
+            if(e.Key == Key.Return)
+            {
+                FilterButton_Click(sender, null);
             }
         }
     }
