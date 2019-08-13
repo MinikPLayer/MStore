@@ -338,9 +338,13 @@ namespace MStore
             GetGamesList(firstRun);
 
             CoinsNumberText.Text = Library.userInfo.coins.ToString();
+            if (CoinsNumberText.Text == "Free")
+            {
+                CoinsNumberText.Text = "0";
+            }
 
 
-            if(minPriceFilter >= 0)
+            if (minPriceFilter >= 0)
             {
                 MinimumPriceFilterBox.Text = minPriceFilter.ToString();
             }
@@ -701,6 +705,10 @@ namespace MStore
                 App.library.NewGameBought(actualGameSelected.id);
 
                 CoinsNumberText.Text = Library.userInfo.coins.ToString();
+                if (CoinsNumberText.Text == "Free")
+                {
+                    CoinsNumberText.Text = "0";
+                }
 
                 GetGamesList(true);
 
@@ -757,6 +765,10 @@ namespace MStore
                         App.library.GetGamesList(true);
 
                         CoinsNumberText.Text = Library.userInfo.coins.ToString();
+                        if(CoinsNumberText.Text == "Free")
+                        {
+                            CoinsNumberText.Text = "0";
+                        }
 
                         GetGamesList(true);
                         

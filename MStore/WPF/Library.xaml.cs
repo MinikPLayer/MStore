@@ -86,6 +86,8 @@ namespace MStore
 
             public string execName = "";
 
+            public int version = -1;
+
             public Size diskSize = new Size(-1);
             public Size downloadSize = new Size(-1);
 
@@ -367,10 +369,13 @@ namespace MStore
         public Library()
         {
             InitializeComponent();
-            
+
+            bool firstRun = false;
+
             if(App.library == null)
             {
                 App.library = this;
+                firstRun = true;
             }
 
             if (client == null)
@@ -409,7 +414,10 @@ namespace MStore
 
             GetGamesList();
 
-
+            if (firstRun)
+            {
+                CheckForUpdates();
+            }
             //client.DownloadGame(0, userInfo.token);
 
         }
@@ -578,6 +586,13 @@ namespace MStore
             if (!long.TryParse(data, out game.diskSize.bytes))
             {
                 Debug.LogError("Cannot parse \"" + data + "\" ( disk size ) to long");
+            }
+
+            //Version
+            gameInfo = GetStringToSpecialCharAndDelete(gameInfo, '\n', out data);
+            if (!int.TryParse(data, out game.version))
+            {
+                Debug.LogError("Cannot parse \"" + data + "\" ( version ) to int");
             }
 
 
@@ -888,6 +903,46 @@ namespace MStore
             games = newGamesList;
         }
 
+        public void CheckForUpdates()
+        {
+            for(int i = 0;i<games.Count;i++)
+            {
+                if(!games[i].installed)
+                {
+                    continue;
+                }
+
+                string versionFilePath = appPath + games[i].path + "version.txt";
+
+                int version = -1;
+                if(!File.Exists(versionFilePath))
+                {
+                    Debug.LogWarning("No version.txt file in " + games[i].name + " app folder");
+                    continue;
+                }
+
+                string content = File.ReadAllText(versionFilePath);
+
+                if(!int.TryParse(content, out version))
+                {
+                    Debug.LogError("Error in version.txt file in app " + games[i].name);
+                    continue;
+                }
+
+                Debug.Log("Game version: " + games[i].version + ", installed version: " + version);
+
+                if(games[i].version > version)
+                {
+                    Debug.Log("Found " + games[i].name + "update, installing", ConsoleColor.Magenta);
+
+                    InstallGameUserDecided(games[i], InstallAppPopup.UserChoose.install);
+                }
+
+
+
+            }
+        }
+
         public void GameInstalled(DownloadEngine.DownloadStatus status, long id, DownloadManager.DownloadTypes type)
         {
             Debug.LogWarning("Game installation status: " + status);
@@ -906,6 +961,8 @@ namespace MStore
 
             UnpackGame(game);
 
+            File.WriteAllText(appPath + game.path + "version.txt", game.version.ToString());
+
             game.installed = true;
 
             //RefreshGamesDisplay();
@@ -918,10 +975,14 @@ namespace MStore
 
         public void UnpackGame(Game game)
         {
-            if(!Directory.Exists(appPath + game.path))
+            if(Directory.Exists(appPath + game.path))
             {
-                Directory.CreateDirectory(appPath + game.path);
+                Directory.Delete(appPath + game.path, true);
             }
+
+            Directory.CreateDirectory(appPath + game.path);
+
+
             ZipFile.ExtractToDirectory(StoreClient.gamesPath + game.path + game.fileName, appPath + game.path);
         }
 
