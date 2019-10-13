@@ -97,10 +97,20 @@
     </ApplicationDefinition>
     <Compile Include="Debug.cs" />
     <Compile Include="DownloadEngine.cs" />
+    <Compile Include="Util.cs" />
+    <Compile Include="WPF\Admin\AdminVoucherMenu.xaml.cs">
+      <DependentUpon>AdminVoucherMenu.xaml</DependentUpon>
+    </Compile>
     <Compile Include="WPF\Blank.xaml.cs">
       <DependentUpon>Blank.xaml</DependentUpon>
     </Compile>
     <Compile Include="ClientEngine.cs" />
+    <Compile Include="WPF\Admin\AdminUserMenu.xaml.cs">
+      <DependentUpon>AdminUserMenu.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="WPF\Admin\AdminMenu.xaml.cs">
+      <DependentUpon>AdminMenu.xaml</DependentUpon>
+    </Compile>
     <Compile Include="WPF\VoucherWindow.xaml.cs">
       <DependentUpon>VoucherWindow.xaml</DependentUpon>
     </Compile>
@@ -132,9 +142,21 @@
       <DependentUpon>Menu.xaml</DependentUpon>
     </Compile>
     <Compile Include="StoreClient.cs" />
+    <Page Include="WPF\Admin\AdminVoucherMenu.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="WPF\Blank.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="WPF\Admin\AdminUserMenu.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="WPF\Admin\AdminMenu.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="WPF\VoucherWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -239,6 +261,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\DownloadIcon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="calicat_20190930202104.mp4" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

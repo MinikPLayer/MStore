@@ -18,7 +18,7 @@ namespace MStore
         private int port = -1;
 
         public string receiveData = "";
-        const int maxDataPacketSize = 255;
+        const int maxDataPacketSize = 32000;
         public byte[] rawReceivedata = new byte[maxDataPacketSize * 2];
 
         public delegate void DataRawReceived(byte[] dataReceived, Int32 length);
@@ -159,6 +159,10 @@ namespace MStore
                         return new Message("Timeout Reached", "ERROR");//"\0";
                     }
                     //Console.WriteLine("Waiting for data...");
+
+
+
+
                     Thread.Sleep(sleepTime);
 
                 }
@@ -219,6 +223,11 @@ namespace MStore
                         return new Message("Timeout Reached", "ERROR");//"\0";
                     }
                     //Console.WriteLine("Waiting for data...");
+
+
+
+
+
                     Thread.Sleep(sleepTime);
 
                 }
@@ -232,10 +241,10 @@ namespace MStore
                 rawReceivedata = new byte[size];
             }*/
 
-                if(size == 85)
+                /*if(size == 85)
                 {
                     Debug.Log("85 :/");
-                }
+                }*/
 
 
                 int packetSize = size;
@@ -246,13 +255,13 @@ namespace MStore
                     
                     while(!stream.DataAvailable)
                     {
-
+                        Thread.Sleep(1);
                     }
 
 
-                //Int32 bytesCount = stream.Read(buffer, 0, size);
-                //Debug.Log("Size: " + size);
-                Int32 bytesCount = stream.Read(rawReceivedata, bytesReceived, packetSize);
+                    //Int32 bytesCount = stream.Read(buffer, 0, size);
+                    //Debug.Log("Size: " + size);
+                    Int32 bytesCount = stream.Read(rawReceivedata, bytesReceived, packetSize);
 
                     //AddBytesToByteArray(buffer, rawReceivedata, bytesCount, bytesReceived);
                     //AddBytesArrayToList(buffer, rawReceivedata, bytesCount);
@@ -267,7 +276,7 @@ namespace MStore
                     
                     
 
-            }
+                }
 
 
                 //Console.WriteLine("Readed data: " + __ReceiveData);
@@ -313,7 +322,10 @@ namespace MStore
                 receiveData = "";
             }
 
-            byte size = 0;
+            int size = 0;
+            byte s = 0;
+
+            bool lastPacket = true;
 
             long totalBytesReceived = 0;
 
@@ -322,57 +334,55 @@ namespace MStore
             overrallWatch.Start();
             do
             {
+                //Debug.Log("R data", ConsoleColor.Blue);
+
+                lastPacket = true;
+
                 size = 0;
+                s = 0;
                 
-                while (size == 0)
+                while (s == 0)
                 {
+                    // Get size and message code
                     Message message = Receive_LowLevel(1, timeout, receiveMessageCode, useString);
-                    
+
 
                     //Receive code only once
                     receiveMessageCode = false;
 
 
-                    //receiveMessage = false;
-                    /* if(!byte.TryParse(message.data, out size))
-                     {
-                         Debug.LogError("Message data conversion failed, trying to convert string " + message.data + " to byte.");
-                         return;
-                     }*/
-                    //if (rawReceivedata.Length == 0)
-                    if(bytesReceived == 0)
+                    if (bytesReceived == 0)
                     {
                         Debug.LogError("Error while reading data in _Receive(float timeout, bool clearReceive = true), size is 0");
                         Thread.Sleep(1000);
                         continue;
                         //return;
                     }
-                    //size = (byte)message.data[0];
-                    //size = rawReceivedata[rawReceivedata.Length - 1];
-                    size = rawReceivedata[0];
-                    //Debug.Log("Size: " + size);
+                    s = rawReceivedata[0];
 
-                    //if(rawReceivedata[rawReceivedata.Length - 1] == size)
-                    if(rawReceivedata[0] == size)
-                    { 
-                        //rawReceivedata.RemoveAt(rawReceivedata.Count - 1);
-                        //byte[] newData = new byte[rawReceivedata.Length - 1];
-                        /*byte[] newData = new byte[bytesReceived - 1];
-                        for(int i = 0;i<newData.Length;i++)
-                        {
-                            newData[i] = rawReceivedata[i];
-                        }
 
-                        rawReceivedata = newData;*/
 
-                        bytesReceived = 0;
+                    if(s == 255)
+                    {
+                        //Debug.Log("There will be more", ConsoleColor.DarkCyan);
+                        lastPacket = false;
+
+                        s = 250;
+                    }
+
+                    if (s == 0)
+                    {
+                        size += 250;
                     }
                     else
                     {
-                        Debug.LogError("Cannot found size in rawReceivedData :/");
+
+                        size += s;
                     }
 
                 }
+
+                //Debug.Log("Size: " + size);
 
                 //Debug.Log("Size: " + size);
 
@@ -382,7 +392,7 @@ namespace MStore
 
                 receiveData += Receive_LowLevel(size, timeout, false, useString).data;
 
-                if(dataRawReceived != null)
+                if (dataRawReceived != null)
                 {
 
                     dataRawReceived.Invoke(rawReceivedata, bytesReceived);
@@ -397,16 +407,16 @@ namespace MStore
 
                 totalBytesReceived += size;
 
-                if(bytesToReceive != -1)
+                if (bytesToReceive != -1)
                 {
-                    if(totalBytesReceived >= bytesToReceive)
+                    if (totalBytesReceived >= bytesToReceive)
                     {
                         break;
                     }
                 }
 
 
-            } while (size >= 255);
+            } while (!lastPacket);//while (size == 255);
 
             //Debug.Log("Out of loop, size is: " + size);
 

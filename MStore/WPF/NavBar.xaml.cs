@@ -30,11 +30,25 @@ namespace MStore.Controls
             none,
             Library,
             Store,
-            Download
+            Download,
+            Admin,
+        }
+
+        public void SetAdminDisplay(bool val)
+        {
+            if(val)
+            {
+                AdminButton.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                AdminButton.Visibility = Visibility.Hidden;
+            }
         }
 
         public void SetMode(Modes mode)
         {
+
             switch (mode)
             {
                 case Modes.none:
@@ -57,6 +71,13 @@ namespace MStore.Controls
                         brush.Color = Color.FromArgb(50, brush.Color.R, brush.Color.G, brush.Color.B);
                         break;
                     }
+                case Modes.Admin:
+                    {
+                        SolidColorBrush brush = (SolidColorBrush)AdminButton.Background;
+                        brush.Color = Color.FromArgb(50, brush.Color.R, brush.Color.G, brush.Color.B);
+                        break;
+                    }
+
                 default:
                     break;
             }
@@ -79,6 +100,11 @@ namespace MStore.Controls
         private void StoreButton_Click(object sender, RoutedEventArgs e)
         {
             PageManager.SetPage(new Store().Content);
+        }
+
+        private void AdminButton_Click(object sender, RoutedEventArgs e)
+        {
+            PageManager.SetPage(new AdminMenu().Content);
         }
     }
 }

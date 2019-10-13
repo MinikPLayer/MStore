@@ -12,7 +12,7 @@ namespace MStore
 {
     public class StoreClient
     {
-        private ClientEngine socket;
+        public ClientEngine socket;
         public bool connected = false;
 
         public static string gamesPath = "./downloadFiles/";
@@ -409,7 +409,7 @@ port = 15332";
             return socket.WaitForReceive();
         }
 
-        public string RecquestLibrary()
+        public string RequestLibrary()
         {
             
             SendCommand(Commands.requestLibrary);

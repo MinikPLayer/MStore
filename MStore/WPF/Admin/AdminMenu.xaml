@@ -1,0 +1,23 @@
+﻿<Window x:Class="MStore.AdminMenu"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MStore.Controls"
+        mc:Ignorable="d"
+        Title="DownloadMenu" Height="720" Width="1280">
+    <Grid Background="{StaticResource BackgroundBrush}">
+        <local:NavBar x:Name="NavBar" HorizontalAlignment="Left" Margin="10,8,0,0" VerticalAlignment="Top" Width="1248" RenderTransformOrigin="0.5,0.5">
+            <local:NavBar.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform AngleY="-0.357"/>
+                    <RotateTransform/>
+                    <TranslateTransform Y="-1.494"/>
+                </TransformGroup>
+            </local:NavBar.RenderTransform>
+        </local:NavBar>
+        <Button x:Name="UsersMenuButton" Content="Users" HorizontalAlignment="Left" Margin="10,146,0,0" VerticalAlignment="Top" Width="615" Height="491" Background="{x:Null}" Foreground="{DynamicResource TextColor}" BorderBrush="{DynamicResource BackgroundBrush}" FontSize="150" Click="UsersMenuButton_Click"/>
+        <Button x:Name="VouchersMenuButton" Content="Vouchers" HorizontalAlignment="Left" Margin="630,146,0,0" VerticalAlignment="Top" Width="632" Height="491" Background="{x:Null}" Foreground="{DynamicResource TextColor}" BorderBrush="{DynamicResource BackgroundBrush}" FontSize="150" Click="VouchersMenuButton_Click"/>
+    </Grid>
+</Window>

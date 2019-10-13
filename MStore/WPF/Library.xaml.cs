@@ -60,12 +60,14 @@ namespace MStore
             public Int64 id = -1;
             public string coins = "0";
 
+
             public User(string _userName, string _token, Int64 _id, string _coins)
             {
                 userName = _userName;
                 token = _token;
                 id = _id;
                 coins = _coins;
+
             }
 
             public User()
@@ -203,6 +205,17 @@ namespace MStore
                     return s1;
                 }
 
+            }
+
+            public override string ToString()
+            {
+                //return base.ToString();
+                return id.ToString() + ") " + name.ToString() + ";" + price;
+            }
+
+            public string ToString(bool allInfo)
+            {
+                return id.ToString() + ") " + name.ToString() + ";" + price + ";" + version.ToString() + ";" + installed.ToString();
             }
         }
 
@@ -422,25 +435,15 @@ namespace MStore
 
         }
 
-        public void GetUserInfo(bool force = false)
+        public static User GetUserInfoFromString(string data)
         {
-            
-            if(userInfo.id != -1 && !force)
-            {
-                return;
-            }
-
-            Debug.Log("Getting user info...");
-
-            string data = client.RequestUserInfo();
-
-            if(data.Length < 5)
+            if (data.Length < 5)
             {
                 Debug.LogError("Some sort of error, user info is less than 5 chars long");
-                return;
+                return null;
             }
 
-            userInfo = new User();
+            User usrInfo = new User();
 
             string info = "";
 
@@ -450,28 +453,28 @@ namespace MStore
 
 
             Int64 _id;
-            if(Int64.TryParse(info, out _id))
+            if (Int64.TryParse(info, out _id))
             {
-                userInfo.id = _id;
+                usrInfo.id = _id;
             }
             else
             {
                 Debug.LogError("Cannot parse \"" + info + "\" to Int64");
-                return;
+                return null;
             }
 
 
             //Token
             data = GetStringToSpecialCharAndDelete(data, '\n', out info);
 
-            if(info.Length > 0)
+            if (info.Length > 0)
             {
-                userInfo.token = info;
+                usrInfo.token = info;
             }
             else
             {
                 Debug.LogError("Cannot parse \"" + info + "\" to string");
-                return;
+                return null;
             }
 
             //Username
@@ -479,12 +482,12 @@ namespace MStore
 
             if (info.Length > 0)
             {
-                userInfo.userName = info;
+                usrInfo.userName = info;
             }
             else
             {
                 Debug.LogError("Cannot parse \"" + info + "\" to string");
-                return;
+                return null;
             }
 
             //Coins
@@ -509,12 +512,31 @@ namespace MStore
                 }
             }*/
 
-            userInfo.coins = info;
+            usrInfo.coins = info;
+
+            
+
+            return usrInfo;
+        }
+
+        public static void GetUserInfo(bool force = false)
+        {
+            
+            if(userInfo.id != -1 && !force)
+            {
+                return;
+            }
+
+            Debug.Log("Getting user info...");
+
+            string data = client.RequestUserInfo();
+
+            userInfo = GetUserInfoFromString(data);
 
         }
 
 
-        private string GetStringToSpecialChar(string str, char specialChar)
+        private static string GetStringToSpecialChar(string str, char specialChar)
         {
             string value = "";
 
@@ -534,14 +556,14 @@ namespace MStore
         /// <param name="specialChar"></param>
         /// <param name="strToSpecialChar"></param>
         /// <returns></returns>
-        private string GetStringToSpecialCharAndDelete(string str, char specialChar, out string strToSpecialChar)
+        private static string GetStringToSpecialCharAndDelete(string str, char specialChar, out string strToSpecialChar)
         {
             strToSpecialChar = GetStringToSpecialChar(str, specialChar);
 
             return str.Remove(0, strToSpecialChar.Length + 1);
         }
 
-        private Game ParseStringToGame(string gameInfo)
+        public static Game ParseStringToGame(string gameInfo)
         {
             string data = "";
 
@@ -624,7 +646,7 @@ namespace MStore
         {
             if (games.Count == 0 || forceRefresh)
             {
-                string library = client.RecquestLibrary();
+                string library = client.RequestLibrary();
 
                 games = new List<Game>();
 

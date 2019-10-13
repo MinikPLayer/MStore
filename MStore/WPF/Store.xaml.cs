@@ -335,6 +335,7 @@ namespace MStore
 
             gamesSPGamesStartIndex = GamesSP.Children.Count;
 
+            Library.GetUserInfo(true);
             GetGamesList(firstRun);
 
             CoinsNumberText.Text = Library.userInfo.coins.ToString();
@@ -459,7 +460,7 @@ namespace MStore
                     if(game != null)
                     {
                         //AddGameToTheList(game);
-                        games.Add(game);
+                        games.Add(game);    
                     }
                 }
             }
@@ -761,7 +762,7 @@ namespace MStore
                 {
                     case "OK":
                         MessageBox.Show("Voucher successfully used", "Voucher", MessageBoxButton.OK, MessageBoxImage.Information);
-                        App.library.GetUserInfo(true);
+                        Library.GetUserInfo(true);
                         App.library.GetGamesList(true);
 
                         CoinsNumberText.Text = Library.userInfo.coins.ToString();
@@ -817,6 +818,18 @@ namespace MStore
 
         private void FilterButton_Click(object sender, RoutedEventArgs e)
         {
+            // Yaaas, easter eggs xD
+            if(SearchBar.Text == "EasterEgg")
+            {
+                UserVoucherButton.Content = "Use Egg";
+            }
+            if(SearchBar.Text == "Kitko :3")
+            {
+                string box = "";
+                box += (char)75; box += (char)111; box += (char)99; box += (char)104; box += (char)97; box += (char)109; box += (char)32; ; box += (char)67; box += (char)105; box += 'ę'; box += (char)32; box += (char)75; box += (char)105; box += (char)116; box += (char)107; box += (char)111; box += (char)32; box += (char)58; box += (char)51;
+                MessageBox.Show(box, "<3", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+
             GetGamesList(true);
 
 

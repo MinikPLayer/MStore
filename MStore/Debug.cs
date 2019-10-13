@@ -57,5 +57,16 @@ namespace MStore
 
             
         }
+
+        public static void ConversionError(string src, string dstName = "", object dst = null)
+        {
+            if(dst == null)
+            {
+                LogError("Cannot convert \"" + src + "\"");
+                return;
+            }
+
+            LogError("Cannot convert \"" + src + "\" to " + dstName + " ( " + dst.GetType().Name + " )");
+        }
     }
 }
